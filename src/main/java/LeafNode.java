@@ -2,7 +2,6 @@ public class LeafNode extends Node {
     private Record[] records= new Record[39];
     private LeafNode nextLeafNode;
 
-
     public LeafNode(short[] keys, Record[] records){
         super(keys, null);
         this.records = records;
