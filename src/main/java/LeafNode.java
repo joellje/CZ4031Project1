@@ -3,13 +3,13 @@ public class LeafNode extends Node {
     private LeafNode nextLeafNode;
 
 
-    public LeafNode(int[] keys, Record[] records){
+    public LeafNode(short[] keys, Record[] records){
         super(keys, null);
         this.records = records;
         this.nextLeafNode = null;
 
     }
-    public LeafNode(int[] keys, Record[] records, Node parent){
+    public LeafNode(short[] keys, Record[] records, Node parent){
         super(keys, null, parent);
         this.records = records;
         this.nextLeafNode = null;
@@ -37,14 +37,14 @@ public class LeafNode extends Node {
     @Override public void setChildren(Node[] children){
         System.out.println("No children for leaf nodes.");
     }
-    @Override public Node getChild(int key){
+    @Override public Node getChild(short key){
         System.out.println("No children for leaf nodes.");
         return null;
     }
     
     //useful methods
-    public Record getRecord(int key){
-        int[] keys = getKeys();
+    public Record getRecord(short key){
+        short[] keys = getKeys();
         int index = -1;
         for(int i = 0; i < keys.length; i++){
             if(keys[i] == key){
@@ -58,10 +58,10 @@ public class LeafNode extends Node {
         }
         return getRecords()[index];
     }
-    public void deleteRecord(int key){
-        int[] keys = getKeys();
+    public void deleteRecord(short key){
+        short[] keys = getKeys();
         Record[] records = getRecords();
-        int[] updatedKeys = new int[keys.length];
+        short[] updatedKeys = new short[keys.length];
         Record[] updatedRecords = new Record[39];
 
         int index = -1;

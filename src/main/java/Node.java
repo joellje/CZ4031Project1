@@ -1,17 +1,17 @@
 public class Node {
     private Node parent;
-    private int[] keys = new int[39];
+    private short[] keys = new short[39];
     private boolean isLeafNode;
     private Node[] children = new Node[40];
 
     //initialise
-    public Node(int[] keys, Node[] children){
+    public Node(short[] keys, Node[] children){
         this.keys = keys;
         this.children = children;
         this.isLeafNode = false;
         this.parent = null;
     }
-    public Node(int[] keys, Node[] children, Node parent){
+    public Node(short[] keys, Node[] children, Node parent){
         this.keys = keys;
         this.children = children;
         this.isLeafNode = false;
@@ -28,7 +28,7 @@ public class Node {
     public boolean getIsLeafNode(){
         return this.isLeafNode;
     }   
-    public int[] getKeys(){
+    public short[] getKeys(){
         return this.keys;
     }
     
@@ -39,12 +39,12 @@ public class Node {
     public void setChildren(Node[] children){
         this.children = children;
     }
-    public void setKeys(int[] keys){
+    public void setKeys(short[] keys){
         this.keys = keys;
     }
     //functions to get stuff
-    public Node getChild(int key){
-        int[] keys = getKeys();
+    public Node getChild(short key){
+        short[] keys = getKeys();
         int index = -1;
         for(int i = 0; i < keys.length; i++){
             if(keys[i] == key){
