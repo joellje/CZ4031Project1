@@ -1,13 +1,11 @@
-import java.util.Date;
+import java.time.LocalDate;
 
 public class DateCompressor {
-	private static final long MAGIC=86400000L;
-
-	public static Integer compress(Date date) {
-		return (int) (date.getTime() / MAGIC);
+	public static int compress(LocalDate date) {
+		return (int) date.toEpochDay();
 	}
 
-	public static Date uncompress(Integer dateCompressed) {
-		return new Date((long) dateCompressed * MAGIC);
+	public static LocalDate uncompress(int dateCompressed) {
+		return LocalDate.ofEpochDay(dateCompressed);
 	}
 }
