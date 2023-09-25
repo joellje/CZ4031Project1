@@ -91,4 +91,19 @@ public class Record {
 	public void setHomeTeamWins(int homeTeamWins) {
 		this.homeTeamWins = homeTeamWins == 1;
 	}
+
+	public String toString() {
+		return "Record{" +
+				"gameDateEst=" + this.getGameDateEst() +
+				", teamIdHome=" + teamIdHome +
+				", ptsHome=" + ptsHome +
+				", fgPctHome=" + fgPctHome +
+				", ftPctHome=" + ftPctHome +
+				", fg3PctHome=" + fg3PctHome +
+				", astHome=" + astHome +
+				", rebHome=" + rebHome +
+				", homeTeamWins=" + homeTeamWins +
+				'}';
+	}
+
 }
