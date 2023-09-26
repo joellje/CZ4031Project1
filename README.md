@@ -1,1 +1,9 @@
-hi
+# CZ4031 Project 1
+
+## Group 35
+
+### Team Members:
+- KWA BING HONG, KEANE
+- JOEL LIM JIE EN
+- TAN SONG HUANG, MARCUS
+- PEH WEI HANG

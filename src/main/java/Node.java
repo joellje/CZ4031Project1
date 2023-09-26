@@ -26,7 +26,7 @@ public class Node {
         return this.children;
     }
     public boolean getIsLeafNode(){
-        return this.isLeafNode;
+        return false;
     }   
     public short[] getKeys(){
         return this.keys;

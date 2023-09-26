@@ -1,6 +1,8 @@
 public class LeafNode extends Node {
-    private Record[] records= new Record[39];
+    private Record[] records = new Record[39];
     private LeafNode nextLeafNode;
+
+    private LeafNode prevLeafNode;
 
     public LeafNode(short[] keys, Record[] records){
         super(keys, null);
@@ -8,7 +10,7 @@ public class LeafNode extends Node {
         this.nextLeafNode = null;
 
     }
-    public LeafNode(short[] keys, Record[] records, Node parent){
+    public LeafNode(short[] keys, Record[] records, LeafNode prev, Node parent){
         super(keys, null, parent);
         this.records = records;
         this.nextLeafNode = null;
@@ -21,6 +23,10 @@ public class LeafNode extends Node {
     public LeafNode getNextLeafNode(){
         return nextLeafNode;
     }
+
+    public LeafNode getPrevLeafNode(){
+        return prevLeafNode;
+    }
     @Override public Node[] getChildren(){
         System.out.println("Leaf node, no child nodes.");
         return null;
@@ -30,8 +36,11 @@ public class LeafNode extends Node {
     public void setRecords(Record[] records){
         this.records = records;
     }
-    public void setNextLeafNode(LeafNode nexLeafNode){
-        this.nextLeafNode = nexLeafNode;
+    public void setNextLeafNode(LeafNode nextLeafNode){
+        this.nextLeafNode = nextLeafNode;
+    }
+    public void setPrevLeafNode(LeafNode PrevLeafNode){
+        this.nextLeafNode = PrevLeafNode;
     }
     @Override public void setChildren(Node[] children){
         System.out.println("No children for leaf nodes.");
@@ -40,7 +49,10 @@ public class LeafNode extends Node {
         System.out.println("No children for leaf nodes.");
         return null;
     }
-    
+    public boolean getIsLeafNode(){
+        return true;
+    }
+
     //useful methods
     public Record getRecord(short key){
         short[] keys = getKeys();
