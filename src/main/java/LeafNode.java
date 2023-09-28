@@ -49,7 +49,7 @@ public class LeafNode extends Node {
         System.out.println("No children for leaf nodes.");
         return null;
     }
-    public boolean getIsLeafNode(){
+    @Override public boolean getIsLeafNode(){
         return true;
     }
 

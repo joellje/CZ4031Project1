@@ -1,20 +1,17 @@
 public class Node {
     private Node parent;
     private short[] keys = new short[39];
-    private boolean isLeafNode;
     private Node[] children = new Node[40];
 
     //initialise
     public Node(short[] keys, Node[] children){
         this.keys = keys;
         this.children = children;
-        this.isLeafNode = false;
         this.parent = null;
     }
     public Node(short[] keys, Node[] children, Node parent){
         this.keys = keys;
         this.children = children;
-        this.isLeafNode = false;
         this.parent = parent;
     }
 
