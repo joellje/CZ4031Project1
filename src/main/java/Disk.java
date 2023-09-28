@@ -11,11 +11,11 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class Disk {
-    private final int SIZE_OF_MEMORY;
-    private final int SIZE_OF_BLOCK;
-    private final int SIZE_OF_RECORD;
-    private final int RECORDS_IN_BLOCK;
-    private final int NUMBER_OF_BLOCKS;
+    private final int SIZE_OF_MEMORY = 104857600;
+    private final int SIZE_OF_BLOCK = 400;
+    private final int SIZE_OF_RECORD = 23;
+    private final int RECORDS_IN_BLOCK = SIZE_OF_BLOCK / SIZE_OF_RECORD;
+    private final int NUMBER_OF_BLOCKS = SIZE_OF_MEMORY / SIZE_OF_BLOCK;
 
     private int recordIndex;
     private int numberOfRecords;
@@ -25,12 +25,6 @@ public class Disk {
     private Node root;
     private int numberOfLayers;
     public Disk() {
-        SIZE_OF_BLOCK = 400;
-        SIZE_OF_RECORD = 23;
-        RECORDS_IN_BLOCK = SIZE_OF_BLOCK / SIZE_OF_RECORD;
-        SIZE_OF_MEMORY = 104857600;
-        NUMBER_OF_BLOCKS = SIZE_OF_MEMORY / SIZE_OF_BLOCK;
-
         blocks = new Block[NUMBER_OF_BLOCKS];
         blockFactory = new BlockFactory(RECORDS_IN_BLOCK);
     }
