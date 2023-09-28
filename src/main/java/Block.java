@@ -1,19 +1,14 @@
 public class Block {
-	private int MAX_BLOCK_SIZE = 19;
-	private Record[] records = new Record[MAX_BLOCK_SIZE];
+	private Record[] records;
 
-	private int current_block_size = 0;
+	private short size = 0;
 
-	public Block(Record[] records) throws Exception {
+	public Block(Record[] records, int maxBlockSize) throws Exception {
+		this.records = new Record[maxBlockSize];
+
 		for (int i = 0; i < records.length; i++) {
-			if (i >= MAX_BLOCK_SIZE) {
-				System.out.println("Number of records exceeds size of block.");
-				throw new Exception("Number of records exceeds size of block.");
-
-			}
-
 			this.records[i] = records[i];
-			this.current_block_size++;
+			this.size++;
 		}
 	}
 	
@@ -28,6 +23,6 @@ public class Block {
 	}
 
 	public int getSize(){
-		return this.current_block_size;
+		return this.size;
 	}
 }

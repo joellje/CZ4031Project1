@@ -20,23 +20,25 @@ public class Disk {
     private int recordIndex;
     private int numberOfRecords;
     private Block[] blocks;
+    private BlockFactory blockFactory;
     private int blockIndex;
     private Node root;
     private int numberOfLayers;
     public Disk() {
         SIZE_OF_BLOCK = 400;
-        SIZE_OF_RECORD = 21;
-        RECORDS_IN_BLOCK = 19;
+        SIZE_OF_RECORD = 23;
+        RECORDS_IN_BLOCK = SIZE_OF_BLOCK / SIZE_OF_RECORD;
         SIZE_OF_MEMORY = 104857600;
         NUMBER_OF_BLOCKS = SIZE_OF_MEMORY / SIZE_OF_BLOCK;
 
         blocks = new Block[NUMBER_OF_BLOCKS];
+        blockFactory = new BlockFactory(RECORDS_IN_BLOCK);
     }
 
     public void initWithData(String path) {
         try {
             boolean isFirstLine = true;
-            Record[] records = new Record[19];
+            Record[] records = new Record[RECORDS_IN_BLOCK];
             Reader input = new FileReader(path);
             try (BufferedReader br = new BufferedReader(input)) {
                 String line;
@@ -65,15 +67,15 @@ public class Disk {
                     records[recordIndex++] = record;
                     numberOfRecords++;
 
-                    if (recordIndex == 19) {
-                        blocks[blockIndex++] = new Block(records);
-                        records = new Record[19];
+                    if (recordIndex == RECORDS_IN_BLOCK) {
+                        blocks[blockIndex++] = blockFactory.createBlock(records);
+                        records = new Record[RECORDS_IN_BLOCK];
                         recordIndex = 0;
                     }
                 }
             }
             if (recordIndex != 0) {
-                blocks[blockIndex++] = new Block(records);
+                blocks[blockIndex++] = blockFactory.createBlock(records);
             }
 
         } catch (FileNotFoundException e) {
@@ -215,8 +217,17 @@ public class Disk {
     public int getNumberOfLayers() {
         return this.numberOfLayers;
     }
+
     public Node getRoot() {
         return this.root;
+    }
+
+    public int getSizeOfRecord() {
+        return this.SIZE_OF_RECORD;
+    }
+
+    public int getRecordsInBlock() {
+        return this.RECORDS_IN_BLOCK;
     }
 
     // setters
