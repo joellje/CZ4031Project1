@@ -38,37 +38,38 @@ public class Disk {
             boolean isFirstLine = true;
             Record[] records = new Record[19];
             Reader input = new FileReader(path);
-            BufferedReader br = new BufferedReader(input);
-            String line;
-            recordIndex = 0;
+            try (BufferedReader br = new BufferedReader(input)) {
+                String line;
+                recordIndex = 0;
 
-            // Read each line from the file
-            while ((line = br.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    continue;
-                }
-                // parse data
-                String[] data = line.split("\t");
-                LocalDate parsedDate = parseDateOrNull(data[0]);
-                int teamIdHome = parseIntOrNull(data[1]);
-                int ptsHome = parseIntOrNull(data[2]);
-                double fgPctHome = parseDoubleOrNull(data[3]);
-                double ftPctHome = parseDoubleOrNull(data[4]);
-                double fg3PctHome = parseDoubleOrNull(data[5]);
-                int astHome = parseIntOrNull(data[6]);
-                int rebHome = parseIntOrNull(data[7]);
-                int homeTeamWins = parseIntOrNull(data[8]);
+                // Read each line from the file
+                while ((line = br.readLine()) != null) {
+                    if (isFirstLine) {
+                        isFirstLine = false;
+                        continue;
+                    }
+                    // parse data
+                    String[] data = line.split("\t");
+                    LocalDate parsedDate = parseDateOrNull(data[0]);
+                    int teamIdHome = parseIntOrNull(data[1]);
+                    int ptsHome = parseIntOrNull(data[2]);
+                    double fgPctHome = parseDoubleOrNull(data[3]);
+                    double ftPctHome = parseDoubleOrNull(data[4]);
+                    double fg3PctHome = parseDoubleOrNull(data[5]);
+                    int astHome = parseIntOrNull(data[6]);
+                    int rebHome = parseIntOrNull(data[7]);
+                    int homeTeamWins = parseIntOrNull(data[8]);
 
-                // create Record object and set in records AL
-                Record record = new Record(parsedDate, teamIdHome, ptsHome, fgPctHome, ftPctHome, fg3PctHome, astHome, rebHome, homeTeamWins);
-                records[recordIndex++] = record;
-                numberOfRecords++;
+                    // create Record object and set in records AL
+                    Record record = new Record(parsedDate, teamIdHome, ptsHome, fgPctHome, ftPctHome, fg3PctHome, astHome, rebHome, homeTeamWins);
+                    records[recordIndex++] = record;
+                    numberOfRecords++;
 
-                if (recordIndex == 19) {
-                    blocks[blockIndex++] = new Block(records);
-                    records = new Record[19];
-                    recordIndex = 0;
+                    if (recordIndex == 19) {
+                        blocks[blockIndex++] = new Block(records);
+                        records = new Record[19];
+                        recordIndex = 0;
+                    }
                 }
             }
             if (recordIndex != 0) {
