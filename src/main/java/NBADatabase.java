@@ -91,21 +91,22 @@ public class NBADatabase {
     return this.root;
   }
 
-    public int getNumberOfBlocks() {
-        return this.disk.getNumberOfBlocks();
-    }
+  public int getNumberOfBlocks() {
+    return this.disk.getNumberOfBlocks();
+  }
 
-    public int getNumberOfRecords() {
-        return this.disk.getNumberOfRecords();
-    }
+  public int getNumberOfRecords() {
+    return this.disk.getNumberOfRecords();
+  }
 
-    public int getSizeOfRecord() {
-        return this.disk.getSizeOfRecord();
-    }
+  public int getSizeOfRecord() {
+    return this.disk.getSizeOfRecord();
+  }
 
-    public int getRecordsInBlock() {
-        return this.disk.getRecordsInBlock();
-    }
+  public int getRecordsInBlock() {
+    return this.disk.getRecordsInBlock();
+  }
+
   // setters
   public void incNumberOfLayers() {
     this.numberOfLayers++;
