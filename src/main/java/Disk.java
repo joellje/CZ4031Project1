@@ -1,6 +1,6 @@
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.time.LocalDate;
@@ -54,8 +54,17 @@ public class Disk {
           int homeTeamWins = parseIntOrNull(data[8]);
 
           // create Record object and set in records AL
-          Record record = new Record(parsedDate, teamIdHome, ptsHome, fgPctHome, ftPctHome, fg3PctHome, astHome,
-              rebHome, homeTeamWins);
+          Record record =
+              new Record(
+                  parsedDate,
+                  teamIdHome,
+                  ptsHome,
+                  fgPctHome,
+                  ftPctHome,
+                  fg3PctHome,
+                  astHome,
+                  rebHome,
+                  homeTeamWins);
           records[recordIndex++] = record;
           numberOfRecords++;
 
@@ -83,7 +92,7 @@ public class Disk {
   }
 
   public static LocalDate parseDateOrNull(String dateString) {
-    String[] patterns = { "dd/MM/yyyy", "d/M/yyyy", "dd/M/yyyy", "d/MM/yyyy" };
+    String[] patterns = {"dd/MM/yyyy", "d/M/yyyy", "dd/M/yyyy", "d/MM/yyyy"};
 
     for (String pattern : patterns) {
       try {

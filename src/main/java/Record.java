@@ -66,10 +66,8 @@ public class Record {
   }
 
   public int getHomeTeamWins() {
-    if (this.homeTeamWins)
-      return 1;
-    else
-      return 0;
+    if (this.homeTeamWins) return 1;
+    else return 0;
   }
 
   // setters
@@ -110,17 +108,25 @@ public class Record {
   }
 
   public String toString() {
-    return "Record{" +
-        "gameDateEst=" + this.getGameDateEst() +
-        ", teamIdHome=" + teamIdHome +
-        ", ptsHome=" + ptsHome +
-        ", fgPctHome=" + fgPctHome +
-        ", ftPctHome=" + ftPctHome +
-        ", fg3PctHome=" + fg3PctHome +
-        ", astHome=" + astHome +
-        ", rebHome=" + rebHome +
-        ", homeTeamWins=" + homeTeamWins +
-        '}';
+    return "Record{"
+        + "gameDateEst="
+        + this.getGameDateEst()
+        + ", teamIdHome="
+        + teamIdHome
+        + ", ptsHome="
+        + ptsHome
+        + ", fgPctHome="
+        + fgPctHome
+        + ", ftPctHome="
+        + ftPctHome
+        + ", fg3PctHome="
+        + fg3PctHome
+        + ", astHome="
+        + astHome
+        + ", rebHome="
+        + rebHome
+        + ", homeTeamWins="
+        + homeTeamWins
+        + '}';
   }
-
 }
