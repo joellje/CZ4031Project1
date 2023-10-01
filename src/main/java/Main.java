@@ -5,17 +5,17 @@ public class Main {
 		System.out.println("Application Start");
 		System.out.println("=================================");
 
-		Disk disk = new Disk();
+		NBADatabase database = new NBADatabase();
 		
-		disk.initWithData(Paths.get("").toAbsolutePath().getParent().getParent().getParent().toString() + "/games.txt");
+		database.loadFromFile(Paths.get("").toAbsolutePath().getParent().getParent().getParent().toString() + "/games.txt");
 
 		System.out.println();
 		System.out.println("EXPERIMENT 1");
-		System.out.println("Total Number of records: " + disk.getNumberOfRecords() + " records");
-		System.out.println("Size of a record: " + disk.getSizeOfRecord() + " bytes");
-		System.out.println("Number of records stored in a block: " + disk.getRecordsInBlock() + " records");
-		System.out.println("Number of blocks for storing data: " + disk.getNumberOfBlocks() + " blocks");
+		System.out.println("Total Number of records: " + database.getNumberOfRecords() + " records");
+		System.out.println("Size of a record: " + database.getSizeOfRecord() + " bytes");
+		System.out.println("Number of records stored in a block: " + database.getRecordsInBlock() + " records");
+		System.out.println("Number of blocks for storing data: " + database.getNumberOfBlocks() + " blocks");
 
-		disk.bulkLoad();
+		database.bulkLoad();
 	}
 }
