@@ -34,8 +34,7 @@ public class NBADatabase {
       }
       LeafNode cur = new LeafNode(keys, records, prev, null);
       NodeArrayList.add(cur);
-      if (prev != null)
-        prev.setNextLeafNode(cur);
+      if (prev != null) prev.setNextLeafNode(cur);
       prev = cur;
     }
 
@@ -73,12 +72,14 @@ public class NBADatabase {
     }
 
     if (al.size() > 40) {
-      System.out.println("Layer " + this.getNumberOfLayers() + " has " + newArrayList.size() + " nodes.");
+      System.out.println(
+          "Layer " + this.getNumberOfLayers() + " has " + newArrayList.size() + " nodes.");
       this.incNumberOfLayers();
       return recurseBPlusTree(newArrayList);
     } else {
       this.incNumberOfLayers();
-      System.out.println("There are " + this.getNumberOfLayers() + " layers, including the root node layer.");
+      System.out.println(
+          "There are " + this.getNumberOfLayers() + " layers, including the root node layer.");
       return root;
     }
   }
@@ -111,5 +112,4 @@ public class NBADatabase {
   public void incNumberOfLayers() {
     this.numberOfLayers++;
   }
-
 }
