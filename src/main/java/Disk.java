@@ -7,8 +7,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class Disk {
     private final int SIZE_OF_MEMORY = 104857600;
@@ -22,8 +20,6 @@ public class Disk {
     private Block[] blocks;
     private BlockFactory blockFactory;
     private int blockIndex;
-    private Node root;
-    private int numberOfLayers;
     public Disk() {
         blocks = new Block[NUMBER_OF_BLOCKS];
         blockFactory = new BlockFactory(RECORDS_IN_BLOCK);
@@ -84,74 +80,7 @@ public class Disk {
         }
     }
 
-    public void bulkLoad() {
-        ArrayList<Record> RecordArrayList = new ArrayList<Record>();
-        for (int i = 0; i < blockIndex; i ++) {
-            for (int j = 0; j < this.blocks[i].getSize(); j++) {
-                Record record = this.blocks[i].getRecords()[j];
-                if (record != null) {
-                    RecordArrayList.add(record);
-                }
-            }
-        }
 
-        Collections.sort(RecordArrayList, new SortingFunction());
-
-        ArrayList<Node> NodeArrayList = new ArrayList<Node>();
-        LeafNode prev = null;
-
-        for (int i = 0; i < RecordArrayList.size(); i = i + 39) {
-            int blockSize = Math.min(39, RecordArrayList.size() - i);
-            short[] keys = new short[blockSize];
-            Record[] records = new Record[blockSize];
-            for (int j = 0; j < blockSize; j++) {
-                keys[j] = PctCompressor.compress(RecordArrayList.get(i+j).getFgPctHome());
-                records[j] = RecordArrayList.get(i+j);
-            }
-            LeafNode cur = new LeafNode(keys, records, prev, null);
-            NodeArrayList.add(cur);
-            if (prev != null)
-                prev.setNextLeafNode(cur);
-            prev = cur;
-        }
-
-        System.out.println("No of leaf nodes: " + NodeArrayList.size() + " leaf nodes");
-        this.root = recurseBPlusTree(NodeArrayList);
-    }
-
-    public Node recurseBPlusTree(ArrayList<Node> al) {
-        ArrayList<Node> newArrayList = new ArrayList<Node>();
-        for (int i = 0; i < al.size(); i = i + 40) {
-            int blockSize = Math.min(40, al.size() - i);
-            short[] keys = new short[blockSize-1];
-            Node[] children = new Node[blockSize];
-            Node root = new Node(keys, children);
-            newArrayList.add(root);
-
-            for (int j = 0; j < blockSize; j++) {
-                Node node = al.get(i+j);
-                children[j] = node;
-                node.setParent(root);
-                if (j != 0) {
-                    Node temp = node;
-                    while (!temp.getIsLeafNode()) {
-                        temp = temp.getChildren()[0];
-                    }
-                    keys[j-1] = temp.getKeys()[0];
-                }
-            }
-        }
-
-        if (al.size() > 40) {
-            System.out.println("Layer " + this.getNumberOfLayers() + " has " + newArrayList.size() + " nodes.");
-            this.incNumberOfLayers();
-            return recurseBPlusTree(newArrayList);
-        } else {
-            this.incNumberOfLayers();
-            System.out.println("There are " + this.getNumberOfLayers() + " layers, including the root node layer.");
-            return root;
-        }
-    }
     public static LocalDate parseDateOrNull(String dateString) {
         String[] patterns = {"dd/MM/yyyy", "d/M/yyyy", "dd/M/yyyy", "d/MM/yyyy" };
 
@@ -190,14 +119,21 @@ public class Disk {
         }
     }
 
-    class SortingFunction implements Comparator<Record> {
-        public int compare (Record a, Record b) {
-            return Double.compare(a.getFgPctHome(), b.getFgPctHome());
-        }
-    }
-
     public Block[] getBlocks() {
         return this.blocks;
+    }
+
+    public ArrayList<Record> getRecords() {
+        ArrayList<Record> allRecords = new ArrayList<Record>();
+        for (int i = 0; i < blockIndex; i ++) {
+            for (int j = 0; j < this.blocks[i].getSize(); j++) {
+                Record record = this.blocks[i].getRecords()[j];
+                if (record != null) {
+                    allRecords.add(record);
+                }
+            }
+        }
+        return allRecords;
     }
 
     public int getNumberOfBlocks() {
@@ -208,24 +144,11 @@ public class Disk {
         return this.numberOfRecords;
     }
 
-    public int getNumberOfLayers() {
-        return this.numberOfLayers;
-    }
-
-    public Node getRoot() {
-        return this.root;
-    }
-
     public int getSizeOfRecord() {
         return this.SIZE_OF_RECORD;
     }
 
     public int getRecordsInBlock() {
         return this.RECORDS_IN_BLOCK;
-    }
-
-    // setters
-    public void incNumberOfLayers() {
-        this.numberOfLayers++;
     }
 }
