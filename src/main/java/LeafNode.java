@@ -10,8 +10,9 @@ public class LeafNode extends Node {
     this.nextLeafNode = null;
   }
 
-  public LeafNode(short[] keys, Record[] records, LeafNode prev, Node parent) {
+  public LeafNode(short[] keys, Record[] records, LeafNode prevLeafNode, Node parent) {
     super(keys, null, parent);
+    this.prevLeafNode = prevLeafNode;
     this.records = records;
     this.nextLeafNode = null;
   }
