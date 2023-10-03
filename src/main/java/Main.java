@@ -23,5 +23,8 @@ public class Main {
     System.out.println("n is 39.");
     database.bulkLoad();
     database.getRootNodeKeys();
+
+    System.out.println("\nEXPERIMENT 3");
+    database.experiment3Linear();
   }
 }
