@@ -17,6 +17,7 @@ public class NBADatabase {
   }
 
   public void bulkLoad() {
+    System.out.println("\nBulk Loading in progress...");
     ArrayList<Record> allRecords = this.disk.getRecords();
 
     Collections.sort(allRecords, new SortingFunction());
@@ -40,6 +41,7 @@ public class NBADatabase {
 
     System.out.println("No of leaf nodes: " + NodeArrayList.size() + " leaf nodes");
     this.root = recurseBPlusTree(NodeArrayList);
+    System.out.println("Bulk Loading is complete. \n");
   }
 
   class SortingFunction implements Comparator<Record> {
@@ -49,12 +51,14 @@ public class NBADatabase {
   }
 
   public Node recurseBPlusTree(ArrayList<Node> al) {
+    Node returnNode = new Node(new short[1], new Node[1]);
     ArrayList<Node> newArrayList = new ArrayList<Node>();
     for (int i = 0; i < al.size(); i = i + 40) {
       int blockSize = Math.min(40, al.size() - i);
       short[] keys = new short[blockSize - 1];
       Node[] children = new Node[blockSize];
       Node root = new Node(keys, children);
+      returnNode = root;
       newArrayList.add(root);
 
       for (int j = 0; j < blockSize; j++) {
@@ -80,7 +84,7 @@ public class NBADatabase {
       this.incNumberOfLayers();
       System.out.println(
           "There are " + this.getNumberOfLayers() + " layers, including the root node layer.");
-      return root;
+      return returnNode;
     }
   }
 
@@ -106,6 +110,15 @@ public class NBADatabase {
 
   public int getRecordsInBlock() {
     return this.disk.getRecordsInBlock();
+  }
+
+  public void getRootNodeKeys() {
+    System.out.print("Root Node Keys: ");
+    for (int key : this.root.getKeys()) {
+      if (key != 0)
+        System.out.print(key + " ");
+    }
+    System.out.println();
   }
 
   // setters

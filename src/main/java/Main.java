@@ -11,8 +11,7 @@ public class Main {
         Paths.get("").toAbsolutePath().getParent().getParent().getParent().toString()
             + "/games.txt");
 
-    System.out.println();
-    System.out.println("EXPERIMENT 1");
+    System.out.println("\nEXPERIMENT 1");
     System.out.println("Total Number of records: " + database.getNumberOfRecords() + " records");
     System.out.println("Size of a record: " + database.getSizeOfRecord() + " bytes");
     System.out.println(
@@ -20,6 +19,9 @@ public class Main {
     System.out.println(
         "Number of blocks for storing data: " + database.getNumberOfBlocks() + " blocks");
 
+    System.out.println("\nEXPERIMENT 2");
+    System.out.println("n is 39.");
     database.bulkLoad();
+    database.getRootNodeKeys();
   }
 }
