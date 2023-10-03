@@ -62,4 +62,12 @@ public class Node {
     }
     return getChildren()[index];
   }
+
+  public void printKeys(){
+    for (short key : this.getKeys()) {
+      if (key != 0)
+        System.out.print(PctCompressor.uncompress(key) + " ");
+    }
+    System.out.println();
+  }
 }

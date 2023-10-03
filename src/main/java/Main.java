@@ -25,6 +25,7 @@ public class Main {
     database.getRootNodeKeys();
 
     System.out.println("\nEXPERIMENT 3");
+    database.experiment3Indexed();
     database.experiment3Linear();
   }
 }
