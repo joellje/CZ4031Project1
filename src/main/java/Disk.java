@@ -12,7 +12,8 @@ public class Disk {
   private final int SIZE_OF_MEMORY = 104857600;
   private final int SIZE_OF_BLOCK = 400;
   private final int SIZE_OF_RECORD = 23;
-  private final int RECORDS_IN_BLOCK = SIZE_OF_BLOCK / SIZE_OF_RECORD;
+  private final int SIZE_OF_BLOCK_OVERHEAD = 2;
+  private final int RECORDS_IN_BLOCK = (SIZE_OF_BLOCK - SIZE_OF_BLOCK_OVERHEAD) / SIZE_OF_RECORD;
   private final int NUMBER_OF_BLOCKS = SIZE_OF_MEMORY / SIZE_OF_BLOCK;
 
   private int numberOfRecords;
@@ -64,7 +65,8 @@ public class Disk {
                   fg3PctHome,
                   astHome,
                   rebHome,
-                  homeTeamWins);
+                  homeTeamWins,
+                  blockIndex);
           records[recordIndex++] = record;
           numberOfRecords++;
 
