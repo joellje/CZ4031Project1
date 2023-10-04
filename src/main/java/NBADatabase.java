@@ -226,4 +226,78 @@ public class NBADatabase {
   public void incNumberOfLayers() {
     this.numberOfLayers++;
   }
+  public void experiment4Indexed() {
+    final long start = System.nanoTime();
+    int indexBlockCount = 0;
+    int recordCount = 0;
+    double totalValue = 0;
+    int dataBlockCount = 0;
+
+    Node root = this.getRoot();
+
+    while (!root.getIsLeafNode()) {
+      int nextIndex = 0;
+      double minimum = PctCompressor.uncompress(root.getKeys()[0]);
+      for (int i = 0; i < root.getKeys().length; i++) {
+        if (PctCompressor.uncompress(root.getKeys()[i]) <= 0.6
+            && PctCompressor.uncompress(root.getKeys()[i]) > minimum) {
+          minimum = PctCompressor.uncompress(root.getKeys()[i]);
+          nextIndex = i;
+        } // keep incrementing until you get the number bigger than what you are looking for
+      }
+      root = root.getChildren()[nextIndex + 1];
+      indexBlockCount++; // keep iterating down until you reach the leaf node to find the range
+    }
+
+    for (int i = 0; i < root.getKeys().length; i++) {
+      LeafNode dataNode = (LeafNode) root;
+      if (PctCompressor.uncompress(root.getKeys()[i]) == 0.5) {
+        recordCount++;
+        totalValue += dataNode.getRecords()[i].getFg3PctHome();
+      }
+    }
+
+    LeafNode temp = (LeafNode) root;
+
+    while (PctCompressor.uncompress(temp.getKeys()[0]) == 0.5) {
+      temp = temp.getPrevLeafNode();
+      indexBlockCount++;
+
+      for (int i = temp.getKeys().length - 1; i >= 0; i--) {
+        if (PctCompressor.uncompress(temp.getKeys()[i]) == 0.5) {
+          recordCount++;
+          totalValue += temp.getRecords()[i].getFg3PctHome();
+        } else {
+          break;
+        }
+      }
+    }
+
+    temp = (LeafNode) root;
+
+    while (PctCompressor.uncompress(temp.getKeys()[temp.getKeys().length - 1]) == 0.5) {
+      temp = temp.getNextLeafNode();
+      indexBlockCount++;
+
+      for (int i = 0; i <= temp.getKeys().length - 1; i++) {
+        if (PctCompressor.uncompress(temp.getKeys()[i]) == 0.5) {
+          recordCount++;
+          totalValue += temp.getRecords()[i].getFg3PctHome();
+        } else {
+          break;
+        }
+      }
+    }
+
+    final long end = System.nanoTime();
+
+    System.out.println("\nUsing B+ Tree Indexing: ");
+    System.out.println("the number of index blocks accessed are: " + indexBlockCount);
+    System.out.println("The number of data blocks accessed are: " + dataBlockCount);
+    System.out.println("B+ Tree Indexing time taken: " + ((end - start) * Math.pow(10, -6)));
+    System.out.println("The number of records counted is: " + recordCount);
+    System.out.println("'FG3_PCT_home' average: " + totalValue / recordCount);
+  }
 }
+
+
