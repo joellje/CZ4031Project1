@@ -1,3 +1,5 @@
+package CZ4031Project1.storage;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -30,7 +32,7 @@ public class Disk {
     try {
       boolean isFirstLine = true;
       int recordIndex = 0;
-      Record[] records = new Record[RECORDS_IN_BLOCK];
+      NBARecord[] records = new NBARecord[RECORDS_IN_BLOCK];
       Reader input = new FileReader(path);
 
       try (BufferedReader br = new BufferedReader(input)) {
@@ -55,8 +57,8 @@ public class Disk {
           int homeTeamWins = parseIntOrNull(data[8]);
 
           // create Record object and set in records AL
-          Record record =
-              new Record(
+          NBARecord record =
+              new NBARecord(
                   parsedDate,
                   teamIdHome,
                   ptsHome,
@@ -72,7 +74,7 @@ public class Disk {
 
           if (recordIndex == RECORDS_IN_BLOCK) {
             blocks[blockIndex++] = blockFactory.createBlock(records);
-            records = new Record[RECORDS_IN_BLOCK];
+            records = new NBARecord[RECORDS_IN_BLOCK];
             recordIndex = 0;
           }
         }
@@ -135,11 +137,11 @@ public class Disk {
     return this.blocks;
   }
 
-  public ArrayList<Record> getRecords() {
-    ArrayList<Record> allRecords = new ArrayList<Record>();
+  public ArrayList<NBARecord> getRecords() {
+    ArrayList<NBARecord> allRecords = new ArrayList<NBARecord>();
     for (int i = 0; i < blockIndex; i++) {
       for (int j = 0; j < this.blocks[i].getSize(); j++) {
-        Record record = this.blocks[i].getRecords()[j];
+        NBARecord record = this.blocks[i].getRecords()[j];
         if (record != null) {
           allRecords.add(record);
         }

@@ -1,3 +1,5 @@
+package CZ4031Project1;
+
 public class PctCompressor {
   private static final short PRECISION = 1000;
 
