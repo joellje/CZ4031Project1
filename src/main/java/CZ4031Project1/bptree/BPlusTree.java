@@ -2,6 +2,7 @@ package CZ4031Project1.bptree;
 
 import CZ4031Project1.storage.NBARecord;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BPlusTree {
   private InternalNode root;
@@ -263,5 +264,21 @@ public class BPlusTree {
       }
     }
     System.out.println();
+  }
+
+  public void printKeysOfNodesAccessed() {
+    for (Node node : this.profiler.nodesAccessed) {
+      if (node instanceof InternalNode) {
+        InternalNode n = (InternalNode) node;
+        System.out.println(
+            "Accessed Internal node with keys: "
+                + Arrays.toString(Arrays.copyOfRange(n.keys, 0, n.size - 1)));
+      } else if (node instanceof LeafNode) {
+        LeafNode n = (LeafNode) node;
+        System.out.println(
+            "Accessed Leaf node with keys: "
+                + Arrays.toString(Arrays.copyOfRange(n.keys, 0, n.size)));
+      }
+    }
   }
 }

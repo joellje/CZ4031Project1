@@ -64,6 +64,9 @@ public class Main {
         indexedResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
     System.out.println("Indexed Average: " + indexedAverage);
 
+    System.out.println("Number of results: " + indexedResults.size());
+    tree.printKeysOfNodesAccessed();
+
     ArrayList<NBARecord> diskResults =
         (ArrayList<NBARecord>)
             disk.getRecords().stream()
