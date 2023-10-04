@@ -1,16 +1,12 @@
 package CZ4031Project1.bptree;
 
 public class InternalNode extends Node {
-  short[] keys;
   Node[] children;
-  int size;
-  int maxSize;
 
   InternalNode left = null;
   InternalNode right = null;
 
   public InternalNode(int maxSize) {
-    super();
     this.maxSize = maxSize;
     this.size = 0;
     this.keys = new short[maxSize];
@@ -62,14 +58,5 @@ public class InternalNode extends Node {
     this.keys[insertIndex - 1] = key;
     this.children[insertIndex] = child;
     size++;
-  }
-
-  boolean isFull() {
-    // store at most maxSize-1 records to leave 1 extra space at all times
-    return this.size == this.maxSize - 1;
-  }
-
-  boolean isOverfull() {
-    return this.size == this.maxSize;
   }
 }

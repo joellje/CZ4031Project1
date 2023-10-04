@@ -3,10 +3,7 @@ package CZ4031Project1.bptree;
 import CZ4031Project1.storage.NBARecord;
 
 public class LeafNode extends Node {
-  short[] keys;
   NBARecord[] records;
-  int size;
-  int maxSize;
 
   LeafNode left;
   LeafNode right;
@@ -33,46 +30,12 @@ public class LeafNode extends Node {
     this.records = records;
   }
 
-  int lowerBound(int key) {
-    int low = 0, high = this.size - 1;
-    while (low < high) {
-      int mid = low + (high - low) / 2;
-
-      if (key <= this.keys[mid]) {
-        high = mid;
-      } else {
-        low = mid + 1;
-      }
-    }
-    if (low < this.size && this.keys[low] < key) {
-      low++;
-    }
-    return low;
-  }
-
-  int upperBound(int key) {
-    int low = 0, high = this.size - 1;
-    while (low < high) {
-      int mid = low + (high - low) / 2;
-
-      if (key >= this.keys[mid]) {
-        low = mid + 1;
-      } else {
-        high = mid;
-      }
-    }
-    if (low < this.size && this.keys[low] < key) {
-      low++;
-    }
-    return low;
-  }
-
   void insert(short key, NBARecord record) throws IllegalStateException {
     if (this.size == this.maxSize)
       throw new IllegalStateException("Cannot insert into full LeafNode");
 
     // insert in order
-    int insertIndex = this.upperBound(key);
+    int insertIndex = this.keyUpperBound(key);
 
     // shift
     for (int i = this.size; i > insertIndex; i--) {

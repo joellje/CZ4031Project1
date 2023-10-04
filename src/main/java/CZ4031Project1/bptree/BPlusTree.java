@@ -155,7 +155,7 @@ public class BPlusTree {
 
     LeafNode ln = getLeafNode(key);
 
-    int rightMost = ln.upperBound(key) - 1;
+    int rightMost = ln.keyUpperBound(key) - 1;
 
     // no match
     if (rightMost == -1) return results;
@@ -164,7 +164,6 @@ public class BPlusTree {
     while (ln != null && ln.keys[rightMost] == key) {
       results.add(ln.records[rightMost]);
       this.setNodeAccessed(ln);
-      // TODO need to somehow get the block from record
       this.setBlockIndexAccessed(ln.records[rightMost].getBlockIndex());
       rightMost--;
       if (rightMost == -1) {
