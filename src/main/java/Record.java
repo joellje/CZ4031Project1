@@ -1,7 +1,7 @@
 import java.time.LocalDate;
 
 public class Record {
-  private int gameDateEstCompressed;
+  private int gameDateEst;
   private int teamIdHome;
   private short ptsHome;
   private short fgPctHome;
@@ -37,7 +37,7 @@ public class Record {
 
   // getters
   public LocalDate getGameDateEst() {
-    return DateCompressor.uncompress(this.gameDateEstCompressed);
+    return DateCompressor.uncompress(this.gameDateEst);
   }
 
   public int getTeamIdHome() {
@@ -79,7 +79,7 @@ public class Record {
 
   // setters
   public void setGameDateEst(LocalDate gameDateEst) {
-    this.gameDateEstCompressed = DateCompressor.compress(gameDateEst);
+    this.gameDateEst = DateCompressor.compress(gameDateEst);
   }
 
   public void setTeamIdHome(int teamIdHome) {
