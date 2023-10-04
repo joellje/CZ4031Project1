@@ -243,7 +243,7 @@ public class NBADatabase {
       int nextIndex = 0;
       double minimum = PctCompressor.uncompress(root.getKeys()[0]);
       for (int i = 0; i < root.getKeys().length; i++) {
-        if (PctCompressor.uncompress(root.getKeys()[i]) <= 0.6
+        if (PctCompressor.uncompress(root.getKeys()[i]) < 0.6
             && PctCompressor.uncompress(root.getKeys()[i]) > minimum) {
           minimum = PctCompressor.uncompress(root.getKeys()[i]);
           nextIndex = i;
@@ -255,7 +255,7 @@ public class NBADatabase {
 
     for (int i = 0; i < root.getKeys().length; i++) {
       LeafNode dataNode = (LeafNode) root;
-      if (PctCompressor.uncompress(root.getKeys()[i]) == 0.5) {
+      if (PctCompressor.uncompress(root.getKeys()[i]) >= 0.6 && PctCompressor.uncompress(root.getKeys()[i]) <= 1.00) {
         recordCount++;
         totalValue += dataNode.getRecords()[i].getFg3PctHome();
       }
@@ -263,12 +263,12 @@ public class NBADatabase {
 
     LeafNode temp = (LeafNode) root;
 
-    while (PctCompressor.uncompress(temp.getKeys()[0]) == 0.5) {
+    while (PctCompressor.uncompress(root.getKeys()[0]) >= 0.6) {
       temp = temp.getPrevLeafNode();
       indexBlockCount++;
 
       for (int i = temp.getKeys().length - 1; i >= 0; i--) {
-        if (PctCompressor.uncompress(temp.getKeys()[i]) == 0.5) {
+        if (PctCompressor.uncompress(root.getKeys()[i]) >= 0.6 && PctCompressor.uncompress(root.getKeys()[i]) <= 1.00) {
           recordCount++;
           totalValue += temp.getRecords()[i].getFg3PctHome();
         } else {
@@ -279,12 +279,12 @@ public class NBADatabase {
 
     temp = (LeafNode) root;
 
-    while (PctCompressor.uncompress(temp.getKeys()[temp.getKeys().length - 1]) == 0.5) {
+    while (PctCompressor.uncompress(temp.getKeys()[temp.getKeys().length - 1]) <= 1.00) {
       temp = temp.getNextLeafNode();
       indexBlockCount++;
 
       for (int i = 0; i <= temp.getKeys().length - 1; i++) {
-        if (PctCompressor.uncompress(temp.getKeys()[i]) == 0.5) {
+        if (PctCompressor.uncompress(root.getKeys()[i]) >= 0.6 && PctCompressor.uncompress(root.getKeys()[i]) <= 1.00) {
           recordCount++;
           totalValue += temp.getRecords()[i].getFg3PctHome();
         } else {
@@ -299,6 +299,35 @@ public class NBADatabase {
     System.out.println("the number of index blocks accessed are: " + indexBlockCount);
     System.out.println("The number of data blocks accessed are: " + dataBlockCount);
     System.out.println("B+ Tree Indexing time taken: " + ((end - start) * Math.pow(10, -6)));
+    System.out.println("The number of records counted is: " + recordCount);
+    System.out.println("'FG3_PCT_home' average: " + totalValue / recordCount);
+  }
+  public void experiment4Linear() {
+    final long start = System.nanoTime();
+    double totalValue = 0;
+    int recordCount = 0;
+    int blockCount = 0;
+
+    for (int i = 0; i < this.disk.getBlocks().length; i++) {
+      if (this.disk.getBlocks()[i] == null) {
+        continue;
+      }
+      blockCount++;
+      for (int j = 0; j < this.disk.getBlocks()[i].getRecords().length; j++) {
+        if (this.disk.getBlocks()[i].getRecords()[j] == null) {
+          continue;
+        }
+        if (this.disk.getBlocks()[i].getRecords()[j].getFgPctHome() >= 0.6 && this.disk.getBlocks()[i].getRecords()[j].getFgPctHome() <= 1.00) {
+          recordCount++;
+          totalValue += this.disk.getBlocks()[i].getRecords()[j].getFg3PctHome();
+        }
+      }
+    }
+
+    final long end = System.nanoTime();
+    System.out.println("\nUsing linear scan: ");
+    System.out.println("Number of data blocks accessed: " + blockCount);
+    System.out.println("Linear scan time taken: " + ((end - start) * Math.pow(10, -6)));
     System.out.println("The number of records counted is: " + recordCount);
     System.out.println("'FG3_PCT_home' average: " + totalValue / recordCount);
   }
