@@ -115,45 +115,38 @@ public class NBADatabase {
       if (PctCompressor.uncompress(root.getKeys()[i]) == 0.5) {
         recordCount++;
         totalValue += dataNode.getRecords()[i].getFg3PctHome();
-        System.out.println(dataNode.getRecords()[i]);
       }
     }
 
     LeafNode temp = (LeafNode) root;
-    temp = temp.getPrevLeafNode();
 
-    while (temp != null) {
+    while (PctCompressor.uncompress(temp.getKeys()[0]) == 0.5) {
+      temp = temp.getPrevLeafNode();
+      indexBlockCount++;
+
       for (int i = temp.getKeys().length - 1; i >= 0; i--) {
         if (PctCompressor.uncompress(temp.getKeys()[i]) == 0.5) {
           recordCount++;
-          LeafNode dataNode = (LeafNode) root;
-          totalValue += dataNode.getRecords()[i].getFg3PctHome();
-          System.out.println(dataNode.getRecords()[i]);
+          totalValue += temp.getRecords()[i].getFg3PctHome();
         } else {
           break;
         }
       }
-      if (PctCompressor.uncompress(root.getKeys()[0]) == 0.5) {
-        temp = temp.getPrevLeafNode();
-      }
     }
 
     temp = (LeafNode) root;
-    temp = temp.getNextLeafNode();
 
-    while (temp != null) {
+    while (PctCompressor.uncompress(temp.getKeys()[temp.getKeys().length - 1]) == 0.5) {
+      temp = temp.getNextLeafNode();
+      indexBlockCount++;
+
       for (int i = 0; i <= temp.getKeys().length - 1; i++) {
         if (PctCompressor.uncompress(temp.getKeys()[i]) == 0.5) {
           recordCount++;
-          LeafNode dataNode = (LeafNode) root;
-          totalValue += dataNode.getRecords()[i].getFg3PctHome();
-          System.out.println(dataNode.getRecords()[i]);
+          totalValue += temp.getRecords()[i].getFg3PctHome();
+        } else {
+          break;
         }
-      }
-      if (PctCompressor.uncompress(temp.getKeys()[temp.getKeys().length - 1]) == 0.5) {
-        temp = temp.getNextLeafNode();
-      } else {
-        break;
       }
     }
 
