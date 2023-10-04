@@ -16,7 +16,7 @@ public class Main {
     System.out.println("=================================");
 
     disk = new Disk();
-    tree = new BPlusTree(39);
+    tree = new BPlusTree(39, true);
 
     experiment1();
     experiment2();
@@ -52,19 +52,27 @@ public class Main {
 
   private static void experiment3() {
     System.out.println("\nEXPERIMENT 3");
+
+    System.out.println("Indexed scan");
+    tree.startProfiling();
     ArrayList<NBARecord> indexedResults = tree.queryKey(PctCompressor.compress(0.5));
+    tree.endProfiling();
+
+    System.out.println("Number of index nodes accessed: " + tree.getNumNodesAccessed());
+    System.out.println("Number of data blocks accessed: " + tree.getNumBlocksAccessed());
+    double indexedAverage =
+        indexedResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
+    System.out.println("Indexed Average: " + indexedAverage);
+
     ArrayList<NBARecord> diskResults =
         (ArrayList<NBARecord>)
             disk.getRecords().stream()
                 .filter((r) -> r.getFgPctHome() == 0.5)
                 .collect(Collectors.toList());
 
-    double indexedAverage =
-        indexedResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
     double linearAverage =
         diskResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
 
-    System.out.println("Indexed Average: " + indexedAverage);
     System.out.println("Linear Average: " + linearAverage);
   }
 }

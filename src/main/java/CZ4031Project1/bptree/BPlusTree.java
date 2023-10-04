@@ -8,10 +8,14 @@ public class BPlusTree {
   private LeafNode firstLeaf;
   private int maxNodeSize;
 
-  public BPlusTree(int maxNodeSize) {
+  private BPlusTreeProfiler profiler;
+
+  public BPlusTree(int maxNodeSize, boolean profile) {
     this.root = null;
     this.firstLeaf = null;
     this.maxNodeSize = maxNodeSize;
+
+    this.profiler = new BPlusTreeProfiler();
   }
 
   private LeafNode getLeafNode(short key) {
@@ -19,6 +23,7 @@ public class BPlusTree {
     Node cursor = this.root;
 
     while (!(cursor instanceof LeafNode)) {
+      this.setNodeAccessed(cursor);
       int childIndex = 0;
       InternalNode cur = (InternalNode) cursor;
       // traverse leaf nodes and get right most
@@ -34,6 +39,7 @@ public class BPlusTree {
       }
       cursor = cur.children[childIndex];
     }
+    this.setNodeAccessed(cursor);
     return (LeafNode) cursor;
   }
 
@@ -156,6 +162,9 @@ public class BPlusTree {
     // traverse keys to find all matches
     while (ln != null && ln.keys[rightMost] == key) {
       results.add(ln.records[rightMost]);
+      this.setNodeAccessed(ln);
+      // TODO need to somehow get the block from record
+      this.setBlockIndexAccessed(ln.records[rightMost].getBlockIndex());
       rightMost--;
       if (rightMost == -1) {
         ln = ln.left;
@@ -165,7 +174,6 @@ public class BPlusTree {
     return results;
   }
 
-  // for experiments
   public int getMaxNodeSize() {
     return this.maxNodeSize;
   }
@@ -208,6 +216,37 @@ public class BPlusTree {
       cursor = cursor.right;
     }
     return total;
+  }
+
+  // profiling
+  public void startProfiling() {
+    this.profiler.startProfiling();
+  }
+
+  public void endProfiling() {
+    this.profiler.endProfiling();
+  }
+
+  public void setBlockIndexAccessed(int blockIndex) {
+    if (!this.profiler.started) return;
+    this.profiler.setBlockIndexAccessed(blockIndex);
+  }
+
+  public void setNodeAccessed(Node node) {
+    if (!this.profiler.started) return;
+    this.profiler.setNodeAccessed(node);
+  }
+
+  public long getProfiledDurationNano() {
+    return this.profiler.endTime - this.profiler.startTime;
+  }
+
+  public int getNumBlocksAccessed() {
+    return this.profiler.blocksIndexesAccessed.size();
+  }
+
+  public int getNumNodesAccessed() {
+    return this.profiler.nodesAccessed.size();
   }
 
   // for debug
