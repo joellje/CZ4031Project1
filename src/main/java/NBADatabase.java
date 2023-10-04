@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 
 public class NBADatabase {
   private Disk disk;
@@ -89,10 +90,10 @@ public class NBADatabase {
 
   public void experiment3Indexed() {
     final long start = System.nanoTime();
-    int indexBlockCount = 0;
+    int indexBlockCount = 1; // start at 1 because we always must at least read the root node
     int recordCount = 0;
     double totalValue = 0;
-    int dataBlockCount = 0;
+    HashSet<Integer> dataBlocksAccessed = new HashSet<Integer>();
 
     Node root = this.getRoot();
 
@@ -114,6 +115,7 @@ public class NBADatabase {
       LeafNode dataNode = (LeafNode) root;
       if (PctCompressor.uncompress(root.getKeys()[i]) == 0.5) {
         recordCount++;
+        dataBlocksAccessed.add(dataNode.getRecords()[i].getBlockIndex());
         totalValue += dataNode.getRecords()[i].getFg3PctHome();
       }
     }
@@ -127,6 +129,7 @@ public class NBADatabase {
       for (int i = temp.getKeys().length - 1; i >= 0; i--) {
         if (PctCompressor.uncompress(temp.getKeys()[i]) == 0.5) {
           recordCount++;
+          dataBlocksAccessed.add(temp.getRecords()[i].getBlockIndex());
           totalValue += temp.getRecords()[i].getFg3PctHome();
         } else {
           break;
@@ -143,6 +146,7 @@ public class NBADatabase {
       for (int i = 0; i <= temp.getKeys().length - 1; i++) {
         if (PctCompressor.uncompress(temp.getKeys()[i]) == 0.5) {
           recordCount++;
+          dataBlocksAccessed.add(temp.getRecords()[i].getBlockIndex());
           totalValue += temp.getRecords()[i].getFg3PctHome();
         } else {
           break;
@@ -154,7 +158,7 @@ public class NBADatabase {
 
     System.out.println("\nUsing B+ Tree Indexing: ");
     System.out.println("the number of index blocks accessed are: " + indexBlockCount);
-    System.out.println("The number of data blocks accessed are: " + dataBlockCount);
+    System.out.println("The number of data blocks accessed are: " + dataBlocksAccessed.size());
     System.out.println("B+ Tree Indexing time taken: " + ((end - start) * Math.pow(10, -6)));
     System.out.println("The number of records counted is: " + recordCount);
     System.out.println("'FG3_PCT_home' average: " + totalValue / recordCount);

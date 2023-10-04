@@ -10,6 +10,7 @@ public class Record {
   private short astHome;
   private short rebHome;
   private boolean homeTeamWins;
+  private short blockIndex;
 
   public Record(
       LocalDate gameDateEst,
@@ -20,7 +21,8 @@ public class Record {
       double fg3PctHome,
       int astHome,
       int rebHome,
-      int homeTeamWins) {
+      int homeTeamWins,
+      int blockIndex) {
     this.setGameDateEst(gameDateEst);
     this.setTeamIdHome(teamIdHome);
     this.setPtsHome(ptsHome);
@@ -30,6 +32,7 @@ public class Record {
     this.setAstHome(astHome);
     this.setRebHome(rebHome);
     this.setHomeTeamWins(homeTeamWins);
+    this.setBlockIndex(blockIndex);
   }
 
   // getters
@@ -70,6 +73,10 @@ public class Record {
     else return 0;
   }
 
+  public int getBlockIndex() {
+    return this.blockIndex;
+  }
+
   // setters
   public void setGameDateEst(LocalDate gameDateEst) {
     this.gameDateEstCompressed = DateCompressor.compress(gameDateEst);
@@ -107,6 +114,10 @@ public class Record {
     this.homeTeamWins = homeTeamWins == 1;
   }
 
+  public void setBlockIndex(int blockIndex) {
+    this.blockIndex = (short) blockIndex;
+  }
+
   public String toString() {
     return "Record{"
         + "gameDateEst="
@@ -127,6 +138,8 @@ public class Record {
         + rebHome
         + ", homeTeamWins="
         + homeTeamWins
+        + ", blockIndex="
+        + blockIndex
         + '}';
   }
 }
