@@ -4,6 +4,8 @@ import CZ4031Project1.bptree.BPlusTree;
 import CZ4031Project1.storage.Disk;
 import CZ4031Project1.storage.NBARecord;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Main {
   private static Disk disk;
@@ -18,10 +20,7 @@ public class Main {
 
     experiment1();
     experiment2();
-
-    // System.out.println("\nEXPERIMENT 3");
-    // disk.experiment3Indexed();
-    // disk.experiment3Linear();
+    experiment3();
   }
 
   private static void experiment1() {
@@ -47,5 +46,25 @@ public class Main {
     System.out.printf("Number of nodes in tree: %d.\n", tree.getNumNodes());
     System.out.printf("Number of levels in tree: %d.\n", tree.getLevels());
     System.out.printf("Keys of root node: %s.\n", tree.getRootNodeKeys().toString());
+    System.out.println(tree.getNumRecords());
+    // tree.printRecords();
+  }
+
+  private static void experiment3() {
+    System.out.println("\nEXPERIMENT 3");
+    ArrayList<NBARecord> indexedResults = tree.queryKey(PctCompressor.compress(0.5));
+    ArrayList<NBARecord> diskResults =
+        (ArrayList<NBARecord>)
+            disk.getRecords().stream()
+                .filter((r) -> r.getFgPctHome() == 0.5)
+                .collect(Collectors.toList());
+
+    double indexedAverage =
+        indexedResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
+    double linearAverage =
+        diskResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
+
+    System.out.println("Indexed Average: " + indexedAverage);
+    System.out.println("Linear Average: " + linearAverage);
   }
 }

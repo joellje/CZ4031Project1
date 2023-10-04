@@ -18,7 +18,8 @@ public class LeafNode extends Node {
     this.records = new NBARecord[maxSize];
   }
 
-  public LeafNode(int maxSize, short[] keys, NBARecord[] records) throws IllegalStateException {
+  public LeafNode(int maxSize, int size, short[] keys, NBARecord[] records)
+      throws IllegalStateException {
     if (keys.length != records.length || keys.length != maxSize) {
       throw new IllegalStateException(
           String.format(
@@ -27,7 +28,7 @@ public class LeafNode extends Node {
               maxSize, keys.length, records.length));
     }
     this.maxSize = maxSize;
-    this.size = keys.length;
+    this.size = size;
     this.keys = keys;
     this.records = records;
   }
@@ -81,9 +82,15 @@ public class LeafNode extends Node {
 
     this.keys[insertIndex] = key;
     this.records[insertIndex] = record;
+    size++;
   }
 
   boolean isFull() {
+    // store at most maxSize-1 records to leave 1 extra space at all times
+    return this.size == this.maxSize - 1;
+  }
+
+  boolean isOverfull() {
     return this.size == this.maxSize;
   }
 }
