@@ -15,7 +15,6 @@ public class Disk {
   private final int RECORDS_IN_BLOCK = SIZE_OF_BLOCK / SIZE_OF_RECORD;
   private final int NUMBER_OF_BLOCKS = SIZE_OF_MEMORY / SIZE_OF_BLOCK;
 
-  private int recordIndex;
   private int numberOfRecords;
   private Block[] blocks;
   private BlockFactory blockFactory;
@@ -29,11 +28,12 @@ public class Disk {
   public void initWithData(String path) {
     try {
       boolean isFirstLine = true;
+      int recordIndex = 0;
       Record[] records = new Record[RECORDS_IN_BLOCK];
       Reader input = new FileReader(path);
+
       try (BufferedReader br = new BufferedReader(input)) {
         String line;
-        recordIndex = 0;
 
         // Read each line from the file
         while ((line = br.readLine()) != null) {
