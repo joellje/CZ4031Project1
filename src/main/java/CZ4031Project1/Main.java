@@ -86,6 +86,7 @@ public class Main {
     System.out.println("Linear Average: " + linearAverage);
     lp.endProfiling();
     System.out.println("Total time taken: " + lp.getProfiledDurationNano() * Math.pow(10, -6));
+    System.out.println("Number of blocks accessed: " + disk.getNumberOfBlocks() + " blocks");
   }
 
   private static void experiment4() {
@@ -121,5 +122,22 @@ public class Main {
     System.out.println("Linear Average: " + linearAverage);
     lp.endProfiling();
     System.out.println("Total time taken: " + lp.getProfiledDurationNano() * Math.pow(10, -6));
+    System.out.println("Number of blocks accessed: " + disk.getNumberOfBlocks() + " blocks");
+  }
+
+  private static void experiment5() {
+    System.out.println("\nEXPERIMENT 5");
+
+    lp.startProfiling();
+    ArrayList<NBARecord> diskResults =
+        (ArrayList<NBARecord>)
+            disk.getRecords().stream()
+                .filter((r) -> r.getFgPctHome() <= 0.35)
+                .collect(Collectors.toList());
+
+    System.out.println("Linear scan");
+    lp.endProfiling();
+    System.out.println("Total time taken: " + lp.getProfiledDurationNano() * Math.pow(10, -6));
+    System.out.println("Number of blocks accessed: " + disk.getNumberOfBlocks() + " blocks");
   }
 }
