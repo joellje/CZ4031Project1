@@ -174,6 +174,35 @@ public class BPlusTree {
     return results;
   }
 
+  public ArrayList<NBARecord> queryKeyRange(short startKey, short endKey) {
+    ArrayList<NBARecord> results = new ArrayList<NBARecord>();
+
+    // empty tree
+    if (this.firstLeaf == null) return results;
+
+    LeafNode ln = getLeafNode(endKey);
+
+    int rightMost = ln.keyUpperBound(endKey) - 1;
+
+    // no match, get the rightmost record
+    if (rightMost == -1) {
+      rightMost = ln.size - 1;
+    }
+
+    // traverse left until reach first record with startKey
+    while (ln != null && ln.keys[rightMost] >= startKey) {
+      results.add(ln.records[rightMost]);
+      this.setNodeAccessed(ln);
+      this.setBlockIndexAccessed(ln.records[rightMost].getBlockIndex());
+      rightMost--;
+      if (rightMost == -1) {
+        ln = ln.left;
+        rightMost = ln.size - 1;
+      }
+    }
+    return results;
+  }
+
   public int getMaxNodeSize() {
     return this.maxNodeSize;
   }

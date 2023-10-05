@@ -21,6 +21,7 @@ public class Main {
     experiment1();
     experiment2();
     experiment3();
+    experiment4();
   }
 
   private static void experiment1() {
@@ -76,6 +77,38 @@ public class Main {
     double linearAverage =
         diskResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
 
+    System.out.println("Linear scan");
+    System.out.println("Linear Average: " + linearAverage);
+  }
+
+  private static void experiment4() {
+    System.out.println("\nEXPERIMENT 4");
+
+    System.out.println("Indexed scan");
+    tree.startProfiling();
+    ArrayList<NBARecord> indexedResults =
+        tree.queryKeyRange(PctCompressor.compress(0.6), PctCompressor.compress(1.0));
+    tree.endProfiling();
+
+    System.out.println("Number of index nodes accessed: " + tree.getNumNodesAccessed());
+    System.out.println("Number of data blocks accessed: " + tree.getNumBlocksAccessed());
+    double indexedAverage =
+        indexedResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
+    System.out.println("Indexed Average: " + indexedAverage);
+
+    System.out.println("Number of results: " + indexedResults.size());
+    tree.printKeysOfNodesAccessed();
+
+    ArrayList<NBARecord> diskResults =
+        (ArrayList<NBARecord>)
+            disk.getRecords().stream()
+                .filter((r) -> 0.6 <= r.getFgPctHome() && r.getFgPctHome() <= 1)
+                .collect(Collectors.toList());
+
+    double linearAverage =
+        diskResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
+
+    System.out.println("Linear scan");
     System.out.println("Linear Average: " + linearAverage);
   }
 }
