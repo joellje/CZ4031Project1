@@ -1,10 +1,12 @@
+package CZ4031Project1.storage;
+
 public class Block {
-  private Record[] records;
+  private NBARecord[] records;
 
   private short size = 0;
 
-  public Block(Record[] records, int maxBlockSize) throws Exception {
-    this.records = new Record[maxBlockSize];
+  public Block(NBARecord[] records, int maxBlockSize) throws Exception {
+    this.records = new NBARecord[maxBlockSize];
 
     for (int i = 0; i < records.length; i++) {
       this.records[i] = records[i];
@@ -13,12 +15,12 @@ public class Block {
   }
 
   // getters
-  public Record[] getRecords() {
+  public NBARecord[] getRecords() {
     return this.records;
   }
 
   // setters
-  public void setRecords(Record[] records) {
+  public void setRecords(NBARecord[] records) {
     this.records = records;
   }
 

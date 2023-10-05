@@ -1,6 +1,10 @@
+package CZ4031Project1.storage;
+
+import CZ4031Project1.DateCompressor;
+import CZ4031Project1.PctCompressor;
 import java.time.LocalDate;
 
-public class Record {
+public class NBARecord {
   private int gameDateEst;
   private int teamIdHome;
   private short ptsHome;
@@ -12,7 +16,7 @@ public class Record {
   private boolean homeTeamWins;
   private short blockIndex;
 
-  public Record(
+  public NBARecord(
       LocalDate gameDateEst,
       int teamIdHome,
       int ptsHome,

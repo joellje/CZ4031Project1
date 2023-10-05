@@ -1,3 +1,5 @@
+package CZ4031Project1;
+
 import java.time.LocalDate;
 
 public class DateCompressor {
