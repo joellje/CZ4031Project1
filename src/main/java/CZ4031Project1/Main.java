@@ -11,12 +11,15 @@ public class Main {
   private static Disk disk;
   private static BPlusTree tree;
 
+  private static LinearProfiler lp;
+
   public static void main(String[] args) {
     System.out.println("Application Start");
     System.out.println("=================================");
 
     disk = new Disk();
     tree = new BPlusTree(39, true);
+    lp = new LinearProfiler();
 
     experiment1();
     experiment2();
@@ -58,6 +61,7 @@ public class Main {
     tree.startProfiling();
     ArrayList<NBARecord> indexedResults = tree.queryKey(PctCompressor.compress(0.5));
     tree.endProfiling();
+    System.out.println("Total time taken: " + tree.getProfiledDurationNano() * Math.pow(10, -6));
 
     System.out.println("Number of index nodes accessed: " + tree.getNumNodesAccessed());
     System.out.println("Number of data blocks accessed: " + tree.getNumBlocksAccessed());
@@ -68,6 +72,7 @@ public class Main {
     System.out.println("Number of results: " + indexedResults.size());
     tree.printKeysOfNodesAccessed();
 
+    lp.startProfiling();
     ArrayList<NBARecord> diskResults =
         (ArrayList<NBARecord>)
             disk.getRecords().stream()
@@ -79,6 +84,8 @@ public class Main {
 
     System.out.println("Linear scan");
     System.out.println("Linear Average: " + linearAverage);
+    lp.endProfiling();
+    System.out.println("Total time taken: " + lp.getProfiledDurationNano() * Math.pow(10, -6));
   }
 
   private static void experiment4() {
@@ -89,6 +96,7 @@ public class Main {
     ArrayList<NBARecord> indexedResults =
         tree.queryKeyRange(PctCompressor.compress(0.6), PctCompressor.compress(1.0));
     tree.endProfiling();
+    System.out.println("Total time taken: " + tree.getProfiledDurationNano() * Math.pow(10, -6));
 
     System.out.println("Number of index nodes accessed: " + tree.getNumNodesAccessed());
     System.out.println("Number of data blocks accessed: " + tree.getNumBlocksAccessed());
@@ -99,6 +107,7 @@ public class Main {
     System.out.println("Number of results: " + indexedResults.size());
     tree.printKeysOfNodesAccessed();
 
+    lp.startProfiling();
     ArrayList<NBARecord> diskResults =
         (ArrayList<NBARecord>)
             disk.getRecords().stream()
@@ -110,5 +119,7 @@ public class Main {
 
     System.out.println("Linear scan");
     System.out.println("Linear Average: " + linearAverage);
+    lp.endProfiling();
+    System.out.println("Total time taken: " + lp.getProfiledDurationNano() * Math.pow(10, -6));
   }
 }
