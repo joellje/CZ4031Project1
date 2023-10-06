@@ -1,5 +1,6 @@
 package CZ4031Project1.bptree;
 
+import CZ4031Project1.PctCompressor;
 import CZ4031Project1.storage.NBARecord;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,6 +146,16 @@ public class BPlusTree {
       this.splitInternalNode(cursor);
       cursor = cursor.parent;
     }
+  }
+
+  public void deleteRange(short start, short end){
+    ArrayList<NBARecord> toDelete = queryKeyRange(start, end);
+    for(NBARecord record : toDelete){
+      double fgpct = record.getFgPctHome();
+      short key = PctCompressor.compress(fgpct);
+      deleteKey(key , record);
+    }
+    return;
   }
 
   public void deleteKey(short key, NBARecord record){
@@ -620,4 +631,6 @@ public class BPlusTree {
       }
     }
   }
+
+  // public int numberOfLayers
 }

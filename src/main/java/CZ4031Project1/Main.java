@@ -127,7 +127,16 @@ public class Main {
 
   private static void experiment5() {
     System.out.println("\nEXPERIMENT 5");
-
+    System.out.println("Indexed scan");
+    tree.startProfiling();
+    short start = PctCompressor.compress(0);
+    short end = PctCompressor.compress(0.35);
+    tree.deleteRange(start, end);
+    tree.endProfiling();
+    System.out.println("Total number of nodes: " + tree.getNumNodes());
+    System.out.println("Total number of levels: " + tree.getLevels());
+    System.out.println("Root node keys: " + tree.getRootNodeKeys());
+    System.out.println("Total time taken: " + tree.getProfiledDurationNano() * Math.pow(10, -6));
     lp.startProfiling();
     ArrayList<NBARecord> diskResults =
         (ArrayList<NBARecord>)
