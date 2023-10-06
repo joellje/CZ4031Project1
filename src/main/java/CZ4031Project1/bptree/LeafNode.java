@@ -1,5 +1,5 @@
 package CZ4031Project1.bptree;
-
+import java.util.Arrays;
 import CZ4031Project1.storage.NBARecord;
 
 public class LeafNode extends Node {
@@ -49,9 +49,15 @@ public class LeafNode extends Node {
   }
 
   int delete(short key, NBARecord record) {
-    for (int i = 0; i < this.getMaxSize(); i++) {
+    // System.out.println("key to delete: " + key);
+    // System.out.println(Arrays.toString(this.keys));
+
+    for (int i = 0; i < size; i++) {
       short[] newKeys = new short[maxSize];
       NBARecord[] newRecords = new NBARecord[maxSize];
+      // if(key == 333){
+      //   System.out.println(Arrays.toString(this.keys));
+      // }
       if (keys[i] > key) {
         break;
       }
@@ -61,7 +67,7 @@ public class LeafNode extends Node {
             newKeys[j] = keys[j];
             newRecords[j] = records[j];
           }
-          for (int j = i + 1; j < this.getMaxSize(); j++) {
+          for (int j = i + 1; j < size; j++) {
             newKeys[j - 1] = keys[j];
             newRecords[j - 1] = records[j];
           }
@@ -72,6 +78,7 @@ public class LeafNode extends Node {
         }
       }
     }
+    // System.out.println("key not in this node");
     return 0;
   }
 

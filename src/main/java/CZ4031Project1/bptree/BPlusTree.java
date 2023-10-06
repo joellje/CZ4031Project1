@@ -62,7 +62,7 @@ public class BPlusTree {
     }
 
     InternalNode splitNode =
-        new InternalNode(this.maxNodeSize, node.size - splitIndex, keys, children);
+            new InternalNode(this.maxNodeSize, node.size - splitIndex, keys, children);
 
     for (int i = 0; i < splitNode.size; i++) {
       children[i].parent = splitNode;
@@ -122,7 +122,7 @@ public class BPlusTree {
     }
 
     LeafNode splitNode =
-        new LeafNode(this.maxNodeSize, ln.size - splitIndex, splitKeys, splitRecords);
+            new LeafNode(this.maxNodeSize, ln.size - splitIndex, splitKeys, splitRecords);
 
     // no root, create and set root
     if (this.root == null) {
@@ -153,6 +153,7 @@ public class BPlusTree {
     for(NBARecord record : toDelete){
       double fgpct = record.getFgPctHome();
       short key = PctCompressor.compress(fgpct);
+      // System.out.println(record.getTeamIdHome());
       deleteKey(key , record);
     }
     return;
@@ -169,43 +170,56 @@ public class BPlusTree {
 
     // delete the record
     int deleted = 0;
+    // System.out.println("delete " + key);
+
     deleted = ln.delete(key, record);
-    while(ln.keys[0] == key && deleted == 0){
+
+    while(ln.keys[0] >= key && deleted == 0){
+      // System.out.println("go left!");
       ln = ln.left;
       deleted = ln.delete(key, record);
     }
-    while(ln.keys[ln.maxSize] == key && deleted == 0){
-      ln = ln.left;
+
+    while(ln.keys[ln.size - 1] <= key && deleted == 0){
+      // System.out.println("go right!");
+
+      ln = ln.right;
       deleted = ln.delete(key, record);
     }
+
     if(deleted == 0){
       System.out.println("Record with key does not exist!"); //if cannot find the record
-      return; 
+      return;
     }
 
     //we have the leaf node with the key, and that key has been deleted. what do?
     //we wanna check if the leafnode size fits the minimum requirement
     int minleafsize = ln.maxSize / 2;
     int sizeDiff = minleafsize - (ln.size - 1);
+    
+    // if(ln.parent != null){
+    //   System.out.println(Arrays.toString(ln.parent.children));
+
+    // }
+
     if(sizeDiff <= 0){
-      InternalNode parent = ln.parent;
-      for(int i = 0; i < parent.size - 1; i++){
-        parent.keys[i] = parent.children[i + 1].keys[0]; // set key of parent to always be the leftmost of the child. 
-      }
+      fixKeys(root);
       return; //dont need do anything if the size fits
     }
+
     //check if can borrow from left
     // check if can borrow from left
     if (ln.left != null && ln.left.size - 1 > minleafsize) {
       borrowLeft(ln, ln.left);
       fixKeys(this.root);
       return;
+
     }
     // check if can borrow from right
     if (ln.right != null && ln.right.size - 1> minleafsize) {
-        borrowRight(ln, ln.right);
-        fixKeys(this.root);
-        return;
+      borrowRight(ln, ln.right);
+      fixKeys(this.root);
+      return;
     }
 
     // else, merge
@@ -232,7 +246,7 @@ public class BPlusTree {
       if(indexOfNode > 0 && node.parent.children[indexOfNode - 1].size - 1 > (node.maxSize - 1) / 2){
         borrowleftinternal(node, (InternalNode) node.parent.children[indexOfNode - 1]);
       }
-      else if(indexOfNode < node.size - 1 && node.parent.children[indexOfNode - 1].size - 1 > (node.maxSize - 1) / 2){
+      else if(indexOfNode < node.size - 1 && node.parent.children[indexOfNode + 1].size - 1 > (node.maxSize - 1) / 2){
         borrowrightinternal(node, (InternalNode) node.parent.children[indexOfNode + 1]);
       }
       else if(indexOfNode > 0){
@@ -243,7 +257,9 @@ public class BPlusTree {
         }
       }
       else{
-        mergeInternal(node, (InternalNode) node.parent.children[indexOfNode - 1]);
+        System.out.println(indexOfNode);
+        // System.out.println(node.parent.children[indexOfNode + 1]);
+        mergeInternal(node, (InternalNode) node.parent.children[indexOfNode + 1]);
         if(node.parent.size < (node.maxSize - 1) / 2){
           fixparent(node.parent);
         }
@@ -251,6 +267,7 @@ public class BPlusTree {
       return;
     }else{
       //if only 1 pointer
+      System.out.println("root issues");
       if(node.size == 1){
         this.root = (InternalNode) node.children[0];
       }
@@ -277,11 +294,16 @@ public class BPlusTree {
       newkeys[i + x] = node2.keys[i];
       newchildren[i + x] = node2.children[i];
     }
+
     newchildren[node1.size + node2.size - 1] = node2.children[node2.size - 1];
     node1.keys = newkeys;
     node1.children = newchildren;
     node1.size = node1.size + node2.size;
-
+    for(Node child : node1.children){
+      if(child != null){
+        child.parent = node1;
+    }
+    }
     int indexOfNode = node1.parent.getChildIndex(node1);
     //we want to delete node 2 to fix the parent
     short[] newkeysparent = new short[node1.maxSize - 1];
@@ -291,14 +313,21 @@ public class BPlusTree {
       newkeysparent[i] = parent.keys[i];
       newchildrenparent[i] = parent.children[i];
     }
+
     newchildrenparent[indexOfNode] = parent.children[indexOfNode];
     for(int i = indexOfNode + 1; i < parent.size - 1; i++){
       newkeysparent[i - 1] = parent.keys[i];
       newchildrenparent[i] = parent.children[i + 1];
     }
+
     parent.keys = newkeysparent;
-    parent.children = newchildrenparent; 
+    parent.children = newchildrenparent;
     parent.size = parent.size - 1;
+    for(Node child : parent.children){
+      if(child != null){
+      child.parent = parent;
+    }
+    }
     //now the parent is fixed, fix the keys
     fixKeys(parent);
     return;
@@ -325,11 +354,16 @@ public class BPlusTree {
     leftnode.keys = newleftkeys;
     leftnode.children = newleftchildren;
     leftnode.size = leftnode.size-1; // left size decreases by 1
+    for(Node child : leftnode.children){
+      if(child != null){
+        child.parent = leftnode;
+      }
+    }
 
     //create new keys and children for node
     short[] newkeys = new short[leftnode.maxSize - 1];
     Node[] newchildren = new Node[leftnode.maxSize];
-    
+
     // first index for key and pointer is the shift
     newkeys[0] = keyShift;
     newchildren[0] = childrenShift;
@@ -343,7 +377,11 @@ public class BPlusTree {
     node.keys = newkeys;
     node.children = newchildren;
     node.size = node.size+1;
-
+    for(Node child : node.children){
+      if(child != null){
+      child.parent = node;
+    }
+    }
     //fix the key
     fixKeys(root);
     return;
@@ -369,11 +407,15 @@ public class BPlusTree {
     //update right
     rightnode.keys = newrightkeys;
     rightnode.children = newrightchildren;
-
+    for(Node child : rightnode.children){
+      if(child != null){
+      child.parent = rightnode;
+    }
+    }
     //initialise arrays for the node
     short[] newkeys = new short[rightnode.maxSize - 1];
     Node[] newchildren = new Node[rightnode.maxSize];
-    
+
     // last key and child is the new ones
     newkeys[node.size - 1] = keyShift;
     newchildren[node.size] = childrenShift;
@@ -386,6 +428,11 @@ public class BPlusTree {
     node.keys = newkeys;
     node.children = newchildren;
     node.size = node.size+1;
+    for(Node child : node.children){
+      if(child != null){
+      child.parent = node;
+    }
+    }
     fixKeys(root);
     return;
   }
@@ -400,7 +447,7 @@ public class BPlusTree {
   }
 
   public void borrowLeft(LeafNode node, LeafNode leftnode){
-    short keyShift = leftnode.keys[leftnode.size - 2];
+    short keyShift = leftnode.keys[leftnode.size - 1];
     NBARecord recordShift = leftnode.records[leftnode.size - 1];
     leftnode.delete(keyShift, recordShift);
     node.insert(keyShift, recordShift);
@@ -419,7 +466,7 @@ public class BPlusTree {
     else if(node instanceof InternalNode){
       InternalNode thisNode = (InternalNode) node;
       short res = fixKeys(thisNode.children[0]); //you wanna tell the above guy the smallest number at your side so just dfs left
-      for(int i = 0; i < thisNode.size; i++){
+      for(int i = 0; i < thisNode.size - 1; i++){
         thisNode.keys[i] = fixKeys(thisNode.children[i + 1]); //fix every key with the smallest branch of the child node too
       }
       return res;
@@ -432,12 +479,13 @@ public class BPlusTree {
     short[] key2 = node2.keys;
     NBARecord[] records1 = node1.records;
     NBARecord[] records2 = node2.records;
-    for(int i = node1.size; i < i + node2.size; i++){
+    for(int i = node1.size; i < node1.size + node2.size; i++){
       int j = 0;
       key1[i] = key2[j];
       records1[i] = records2[j];
       j++;
     }
+
     node1.size = node1.size + node2.size;
 
     // we update the parent
@@ -464,6 +512,12 @@ public class BPlusTree {
     parent.keys = newkeys;
     parent.children = newchildren;
     parent.size = parent.size - 1;
+    node1.right = node2.right;
+    for(Node child : parent.children){
+      if(child != null){
+      child.parent = parent;
+    }
+    }
     return;
   }
 
@@ -531,9 +585,10 @@ public class BPlusTree {
 
   private int getNumNodes(Node root) {
     if (root instanceof LeafNode) return 1;
+    if (root == null) return 0;
     InternalNode r = (InternalNode) root;
     int total = 1;
-    for (int i = 0; i < r.size; i++) total += this.getNumNodes(r.children[i]);
+    for (int i = 0; i < r.size - 1; i++) total += this.getNumNodes(r.children[i]);
     return total;
   }
 
@@ -621,13 +676,13 @@ public class BPlusTree {
       if (node instanceof InternalNode) {
         InternalNode n = (InternalNode) node;
         System.out.println(
-            "Accessed Internal node with keys: "
-                + Arrays.toString(Arrays.copyOfRange(n.keys, 0, n.size - 1)));
+                "Accessed Internal node with keys: "
+                        + Arrays.toString(Arrays.copyOfRange(n.keys, 0, n.size - 1)));
       } else if (node instanceof LeafNode) {
         LeafNode n = (LeafNode) node;
         System.out.println(
-            "Accessed Leaf node with keys: "
-                + Arrays.toString(Arrays.copyOfRange(n.keys, 0, n.size)));
+                "Accessed Leaf node with keys: "
+                        + Arrays.toString(Arrays.copyOfRange(n.keys, 0, n.size)));
       }
     }
   }
