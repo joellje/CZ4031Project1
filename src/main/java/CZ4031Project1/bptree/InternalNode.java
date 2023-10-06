@@ -9,7 +9,7 @@ public class InternalNode extends Node {
   public InternalNode(int maxSize) {
     this.maxSize = maxSize;
     this.size = 0;
-    this.keys = new short[maxSize];
+    this.keys = new short[maxSize - 1];
     this.children = new Node[maxSize];
   }
 

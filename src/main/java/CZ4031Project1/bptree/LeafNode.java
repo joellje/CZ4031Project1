@@ -11,8 +11,8 @@ public class LeafNode extends Node {
   public LeafNode(int maxSize) {
     this.maxSize = maxSize;
     this.size = 0;
-    this.keys = new short[maxSize];
-    this.records = new NBARecord[maxSize];
+    this.keys = new short[maxSize - 1];
+    this.records = new NBARecord[maxSize - 1];
   }
 
   public LeafNode(int maxSize, int size, short[] keys, NBARecord[] records)
@@ -48,6 +48,32 @@ public class LeafNode extends Node {
     size++;
   }
 
+  int delete(short key, NBARecord record){
+    for(int i = 0; i < this.getMaxSize(); i++){
+      short[] newKeys = new short[maxSize];
+      NBARecord[] newRecords = new NBARecord[maxSize];
+      if(keys[i] > key){
+        break;
+      }
+      if(keys[i] == key){
+        if(record == records[i]){
+          for(int j = 0; j < i; j++){
+            newKeys[j] = keys[j];
+            newRecords[j] = records[j];
+          }
+          for(int j = i + 1; j < this.getMaxSize(); j++){
+            newKeys[j - 1] = keys[j];
+            newRecords[j - 1] = records[j];
+          }
+          this.records = newRecords;
+          this.keys = newKeys;
+          size--;
+          return 1;
+        }
+      }
+    }
+    return 0;
+  }
   boolean isFull() {
     // store at most maxSize-1 records to leave 1 extra space at all times
     return this.size == this.maxSize - 1;
@@ -56,4 +82,9 @@ public class LeafNode extends Node {
   boolean isOverfull() {
     return this.size == this.maxSize;
   }
+  int getMaxSize(){
+  return this.maxSize;
 }
+}
+
+
