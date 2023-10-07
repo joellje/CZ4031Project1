@@ -1,6 +1,7 @@
 package CZ4031Project1.bptree;
-import java.util.Arrays;
+
 import CZ4031Project1.storage.NBARecord;
+import java.util.Arrays;
 
 public class LeafNode extends Node {
   NBARecord[] records;
@@ -32,10 +33,10 @@ public class LeafNode extends Node {
 
   void insert(short key, NBARecord record) throws IllegalStateException {
     if (this.size == this.maxSize)
-      throw new IllegalStateException("Cannot insert into full LeafNode");
+      throw new IllegalStateException("Cannot insert into overfull LeafNode");
 
     // insert in order
-    int insertIndex = this.keyUpperBound(key);
+    int insertIndex = this.keyUpperBound(key, 0, this.size - 1);
 
     // shift
     for (int i = this.size; i > insertIndex; i--) {
@@ -55,7 +56,7 @@ public class LeafNode extends Node {
     for (int i = 0; i < size; i++) {
       short[] newKeys = new short[maxSize];
       NBARecord[] newRecords = new NBARecord[maxSize];
-      if(key == 341){
+      if (key == 341) {
         System.out.println(Arrays.toString(this.keys));
       }
       if (keys[i] > key) {
@@ -80,18 +81,5 @@ public class LeafNode extends Node {
     }
     System.out.println("key not in this node");
     return 0;
-  }
-
-  boolean isFull() {
-    // store at most maxSize-1 records to leave 1 extra space at all times
-    return this.size == this.maxSize - 1;
-  }
-
-  boolean isOverfull() {
-    return this.size == this.maxSize;
-  }
-
-  int getMaxSize() {
-    return this.maxSize;
   }
 }

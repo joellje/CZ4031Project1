@@ -6,8 +6,7 @@ public class Node {
   int maxSize;
   int size;
 
-  int keyLowerBound(int key) {
-    int low = 0, high = this.size - 1;
+  int keyLowerBound(int key, int low, int high) {
     while (low < high) {
       int mid = low + (high - low) / 2;
 
@@ -23,8 +22,8 @@ public class Node {
     return low;
   }
 
-  int keyUpperBound(int key) {
-    int low = 0, high = this.size - 1;
+  int keyUpperBound(int key, int low, int high) {
+    high++;
     while (low < high) {
       int mid = low + (high - low) / 2;
 
@@ -33,9 +32,6 @@ public class Node {
       } else {
         high = mid;
       }
-    }
-    if (low < this.size && this.keys[low] < key) {
-      low++;
     }
     return low;
   }
