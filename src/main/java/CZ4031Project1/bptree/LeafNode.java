@@ -1,5 +1,5 @@
 package CZ4031Project1.bptree;
-import java.util.Arrays;
+
 import CZ4031Project1.storage.NBARecord;
 
 public class LeafNode extends Node {
@@ -31,7 +31,7 @@ public class LeafNode extends Node {
   }
 
   void insert(short key, NBARecord record) throws IllegalStateException {
-    if (this.size == this.maxSize){
+    if (this.size == this.maxSize) {
       // throw new IllegalStateException("Cannot insert into full LeafNode");
       return;
     }
@@ -88,9 +88,5 @@ public class LeafNode extends Node {
 
   boolean isOverfull() {
     return this.size == this.maxSize;
-  }
-
-  int getMaxSize() {
-    return this.maxSize;
   }
 }
