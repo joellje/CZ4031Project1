@@ -170,25 +170,25 @@ public class BPlusTree {
 
     // delete the record
     int deleted = 0;
-    // System.out.println("delete " + key);
+    System.out.println("delete " + key);
 
     deleted = ln.delete(key, record);
 
     while(ln.keys[0] >= key && deleted == 0){
-      // System.out.println("go left!");
+      System.out.println("go left!");
       ln = ln.left;
       deleted = ln.delete(key, record);
     }
 
     while(ln.keys[ln.size - 1] <= key && deleted == 0){
-      // System.out.println("go right!");
+      System.out.println("go right!");
 
       ln = ln.right;
       deleted = ln.delete(key, record);
     }
 
     if(deleted == 0){
-      System.out.println("Record with key does not exist!"); //if cannot find the record
+      System.out.println("Record with key " + key + " does not exist!"); //if cannot find the record
       return;
     }
 
@@ -687,5 +687,20 @@ public class BPlusTree {
     }
   }
 
+  public void printLeafs(){
+    Node node = root;
+    while(node instanceof InternalNode){
+      InternalNode x = (InternalNode) node;
+      node = x.children[0];
+    }
+    while(node != null){
+      LeafNode x = (LeafNode) node;
+      if(node.keys[0] > 370){
+        break;
+      }
+      System.out.println(Arrays.toString(x.keys));
+      node = x.right;
+    }
+  }
   // public int numberOfLayers
 }

@@ -55,9 +55,9 @@ public class LeafNode extends Node {
     for (int i = 0; i < size; i++) {
       short[] newKeys = new short[maxSize];
       NBARecord[] newRecords = new NBARecord[maxSize];
-      // if(key == 333){
-      //   System.out.println(Arrays.toString(this.keys));
-      // }
+      if(key == 341){
+        System.out.println(Arrays.toString(this.keys));
+      }
       if (keys[i] > key) {
         break;
       }
@@ -78,7 +78,7 @@ public class LeafNode extends Node {
         }
       }
     }
-    // System.out.println("key not in this node");
+    System.out.println("key not in this node");
     return 0;
   }
 

@@ -21,11 +21,18 @@ public class Main {
     tree = new BPlusTree(39, true);
     lp = new LinearProfiler();
 
+
     experiment1();
     experiment2();
     experiment3();
     experiment4();
-    experiment5();
+    System.out.println("print the leafs");
+    tree.printLeafs();
+
+    // experiment5();
+    // tree.printLeafs();
+
+
   }
 
   private static void experiment1() {
