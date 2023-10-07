@@ -26,10 +26,10 @@ public class Main {
     experiment2();
     experiment3();
     experiment4();
-    System.out.println("print the leafs");
-    tree.printLeafs();
+    // System.out.println("print the leafs");
+    // tree.printLeafs();
 
-    // experiment5();
+    experiment5();
     // tree.printLeafs();
 
 

@@ -31,8 +31,10 @@ public class LeafNode extends Node {
   }
 
   void insert(short key, NBARecord record) throws IllegalStateException {
-    if (this.size == this.maxSize)
-      throw new IllegalStateException("Cannot insert into full LeafNode");
+    if (this.size == this.maxSize){
+      // throw new IllegalStateException("Cannot insert into full LeafNode");
+      return;
+    }
 
     // insert in order
     int insertIndex = this.keyUpperBound(key);
@@ -55,9 +57,6 @@ public class LeafNode extends Node {
     for (int i = 0; i < size; i++) {
       short[] newKeys = new short[maxSize];
       NBARecord[] newRecords = new NBARecord[maxSize];
-      if(key == 341){
-        System.out.println(Arrays.toString(this.keys));
-      }
       if (keys[i] > key) {
         break;
       }
@@ -78,7 +77,7 @@ public class LeafNode extends Node {
         }
       }
     }
-    System.out.println("key not in this node");
+    // System.out.println("key not in this node");
     return 0;
   }
 

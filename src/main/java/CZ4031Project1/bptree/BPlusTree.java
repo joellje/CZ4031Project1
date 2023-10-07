@@ -103,26 +103,46 @@ public class BPlusTree {
     LeafNode ln = getLeafNode(key);
 
     // available capacity
+    //if leafnode is not full
     ln.insert(key, record);
-    if (!ln.isOverfull()) {
-      return;
+      // if(key >= 348){
+      // System.out.println("inserting this key" + key);
+      // System.out.println("This is before insertion" + ln.keys.length +" "+ ln.size + " "+ln.maxSize);
+      // System.out.println(Arrays.toString(ln.keys));
+    //   ln.insert(key, record); //then insert
+    //   // System.out.println("This is after insertion" + ln.keys.length);
+    //   // System.out.println(Arrays.toString(ln.keys));
+    // }
+    //   else{ln.insert(key, record);}
+      if (!ln.isOverfull()) { 
+        return;
     }
 
+    //else
     // leaf node full, split leaf node
     short[] splitKeys = new short[this.maxNodeSize];
     NBARecord[] splitRecords = new NBARecord[this.maxNodeSize];
 
     // max number of nodes in leaf node is maxNodeSize-1
-    int splitIndex = (int) Math.ceil(((this.maxNodeSize - 1) + 1) / 2.0);
+    int splitIndex = (int) Math.ceil(((this.maxNodeSize - 1) + 1) / 2.0); //get the index to split
 
     // split keys and records
     for (int i = splitIndex; i < this.maxNodeSize; i++) {
       splitKeys[i - splitIndex] = ln.keys[i];
       splitRecords[i - splitIndex] = ln.records[i];
+      ln.keys[i] = 0;
+      ln.records[i] = null;
     }
+    // if(key >= 347 & key <= 355){
+    //   System.out.println("splitindex");
+    //   System.out.println(Arrays.toString(ln.keys));
+    //   System.out.println("normalindex");
+    //   System.out.println(Arrays.toString(splitKeys));
 
-    LeafNode splitNode =
-            new LeafNode(this.maxNodeSize, ln.size - splitIndex, splitKeys, splitRecords);
+
+    // }
+
+    LeafNode splitNode = new LeafNode(this.maxNodeSize, ln.size - splitIndex, splitKeys, splitRecords);
 
     // no root, create and set root
     if (this.root == null) {
@@ -170,20 +190,26 @@ public class BPlusTree {
 
     // delete the record
     int deleted = 0;
-    System.out.println("delete " + key);
+    // System.out.println("delete " + key);
 
     deleted = ln.delete(key, record);
+    // if(key == 341){
+    //   // System.out.println("deleting" + key);
+
+    //   // System.out.println(Arrays.toString(ln.keys));
+    // }
 
     while(ln.keys[0] >= key && deleted == 0){
-      System.out.println("go left!");
+      // System.out.println("go left!");
       ln = ln.left;
       deleted = ln.delete(key, record);
     }
 
     while(ln.keys[ln.size - 1] <= key && deleted == 0){
-      System.out.println("go right!");
+      // System.out.println("go right!");
 
       ln = ln.right;
+      // System.out.println(Arrays.toString(ln.keys));
       deleted = ln.delete(key, record);
     }
 
