@@ -83,6 +83,7 @@ public class Main {
             disk.getRecords().stream()
                 .filter((r) -> r.getFgPctHome() == 0.5)
                 .collect(Collectors.toList());
+    lp.endProfiling();
 
     double linearAverage =
         diskResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
@@ -92,7 +93,6 @@ public class Main {
     System.out.println("Number of blocks accessed: " + disk.getNumberOfBlocks() + " blocks");
     System.out.println("Linear Average: " + linearAverage);
     System.out.println("Number of results: " + diskResults.size());
-    lp.endProfiling();
   }
 
   private static void experiment4() {
@@ -118,6 +118,7 @@ public class Main {
             disk.getRecords().stream()
                 .filter((r) -> 0.6 <= r.getFgPctHome() && r.getFgPctHome() <= 1.0)
                 .collect(Collectors.toList());
+    lp.endProfiling();
 
     double linearAverage =
         diskResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
@@ -127,7 +128,6 @@ public class Main {
     System.out.println("Number of blocks accessed: " + disk.getNumberOfBlocks() + " blocks");
     System.out.println("Linear Average: " + linearAverage);
     System.out.println("Number of results: " + diskResults.size());
-    lp.endProfiling();
   }
 
   private static void experiment5() {
@@ -148,9 +148,9 @@ public class Main {
             disk.getRecords().stream()
                 .filter((r) -> r.getFgPctHome() <= 0.35)
                 .collect(Collectors.toList());
+    lp.endProfiling();
 
     System.out.println("Linear scan");
-    lp.endProfiling();
     System.out.println("Total time taken: " + lp.getProfiledDurationNano() * Math.pow(10, -6));
     System.out.println("Number of blocks accessed: " + disk.getNumberOfBlocks() + " blocks");
   }
