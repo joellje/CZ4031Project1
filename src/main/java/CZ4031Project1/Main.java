@@ -39,7 +39,7 @@ public class Main {
     // disk.initWithData(
     // Paths.get("").toAbsolutePath().getParent().toString()
     // + "/games.txt");
-    System.out.println("\nEXPERIMENT 1");
+    System.out.println("\n-----EXPERIMENT 1-----");
     System.out.println("Total Number of records: " + disk.getNumberOfRecords() + " records");
     System.out.println("Size of a record: " + disk.getSizeOfRecord() + " bytes");
     System.out.println(
@@ -49,7 +49,7 @@ public class Main {
   }
 
   private static void experiment2() {
-    System.out.println("\nEXPERIMENT 2");
+    System.out.println("\n-----EXPERIMENT 2-----");
     for (NBARecord record : disk.getRecords()) {
       tree.insert(PctCompressor.compress(record.getFgPctHome()), record);
     }
@@ -62,7 +62,7 @@ public class Main {
   }
 
   private static void experiment3() {
-    System.out.println("\nEXPERIMENT 3");
+    System.out.println("\n-----EXPERIMENT 3-----");
 
     System.out.println("Indexed scan");
     tree.startProfiling();
@@ -75,9 +75,7 @@ public class Main {
     double indexedAverage =
         indexedResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
     System.out.println("Indexed Average: " + indexedAverage);
-
     System.out.println("Number of results: " + indexedResults.size());
-    // tree.printKeysOfNodesAccessed();
 
     lp.startProfiling();
     ArrayList<NBARecord> diskResults =
@@ -90,14 +88,15 @@ public class Main {
         diskResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
 
     System.out.println("Linear scan");
-    System.out.println("Linear Average: " + linearAverage);
-    lp.endProfiling();
     System.out.println("Total time taken: " + lp.getProfiledDurationNano() * Math.pow(10, -6));
     System.out.println("Number of blocks accessed: " + disk.getNumberOfBlocks() + " blocks");
+    System.out.println("Linear Average: " + linearAverage);
+    System.out.println("Number of results: " + diskResults.size());
+    lp.endProfiling();
   }
 
   private static void experiment4() {
-    System.out.println("\nEXPERIMENT 4");
+    System.out.println("\n-----EXPERIMENT 4-----");
 
     System.out.println("Indexed scan");
     tree.startProfiling();
@@ -111,7 +110,6 @@ public class Main {
     double indexedAverage =
         indexedResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
     System.out.println("Indexed Average: " + indexedAverage);
-
     System.out.println("Number of results: " + indexedResults.size());
 
     lp.startProfiling();
@@ -125,15 +123,15 @@ public class Main {
         diskResults.stream().mapToDouble((r) -> r.getFg3PctHome()).average().getAsDouble();
 
     System.out.println("Linear scan");
-    System.out.println("Linear Average: " + linearAverage);
-    lp.endProfiling();
     System.out.println("Total time taken: " + lp.getProfiledDurationNano() * Math.pow(10, -6));
     System.out.println("Number of blocks accessed: " + disk.getNumberOfBlocks() + " blocks");
-    // System.out.println(indexedResults.size() + " " + diskResults.size());
+    System.out.println("Linear Average: " + linearAverage);
+    System.out.println("Number of results: " + diskResults.size());
+    lp.endProfiling();
   }
 
   private static void experiment5() {
-    System.out.println("\nEXPERIMENT 5");
+    System.out.println("\n-----EXPERIMENT 5-----");
     System.out.println("Indexed scan");
     tree.startProfiling();
     short start = PctCompressor.compress(0);
