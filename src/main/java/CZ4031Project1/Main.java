@@ -21,7 +21,6 @@ public class Main {
     tree = new BPlusTree(39, true);
     lp = new LinearProfiler();
 
-
     experiment1();
     experiment2();
     experiment3();
@@ -32,16 +31,13 @@ public class Main {
     experiment5();
     // tree.printLeafs();
 
-
   }
 
   private static void experiment1() {
     // disk.initWithData(
     //     Paths.get("").toAbsolutePath().getParent().getParent().getParent().toString()
     //         + "/games.txt");
-    disk.initWithData(
-        Paths.get("").toAbsolutePath().getParent().toString()
-            + "/games.txt");
+    disk.initWithData(Paths.get("").toAbsolutePath().toString() + "/games.txt");
     System.out.println("\nEXPERIMENT 1");
     System.out.println("Total Number of records: " + disk.getNumberOfRecords() + " records");
     System.out.println("Size of a record: " + disk.getSizeOfRecord() + " bytes");
