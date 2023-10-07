@@ -28,12 +28,11 @@ public class InternalNode extends Node {
     return -1;
   }
 
-  void append(short key, Node child) {
+  void append(short key, Node child) throws IllegalStateException {
     if (this.isOverfull())
       throw new IllegalStateException("Cannot insert into overfull InternalNode");
-    if (this.size == 0)
-      throw new IllegalStateException("Cannot insert key into empty InternalNode");
-    this.keys[size - 1] = key;
+    if (this.size == 0) this.keys[size] = key;
+    else this.keys[size - 1] = key;
     this.children[size] = child;
     size++;
   }
@@ -41,6 +40,8 @@ public class InternalNode extends Node {
   void appendChild(Node child) {
     if (this.isOverfull())
       throw new IllegalStateException("Cannot insert into overfull InternalNode");
+    if (this.size == 0)
+      throw new IllegalStateException("Cannot insert child into empty InternalNode");
     this.children[size] = child;
     size++;
   }
@@ -48,8 +49,6 @@ public class InternalNode extends Node {
   void insert(short key, Node child, int insertIndex) throws IllegalStateException {
     if (this.isOverfull())
       throw new IllegalStateException("Cannot insert into overfull InternalNode");
-    if (this.size == 0)
-      throw new IllegalStateException("Cannot insert key into empty InternalNode");
     // shift
     for (int i = size; i > insertIndex; i--) {
       this.keys[i - 1] = this.keys[i - 2];

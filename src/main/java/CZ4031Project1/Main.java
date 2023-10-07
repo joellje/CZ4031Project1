@@ -21,27 +21,24 @@ public class Main {
     tree = new BPlusTree(39, true);
     lp = new LinearProfiler();
 
-
     experiment1();
     experiment2();
+    // tree.assertTreeStructure();
     experiment3();
     experiment4();
-    System.out.println("print the leafs");
-    tree.printLeafs();
 
     // experiment5();
     // tree.printLeafs();
 
-
   }
 
   private static void experiment1() {
-    // disk.initWithData(
-    //     Paths.get("").toAbsolutePath().getParent().getParent().getParent().toString()
-    //         + "/games.txt");
     disk.initWithData(
-        Paths.get("").toAbsolutePath().getParent().toString()
+        Paths.get("").toAbsolutePath().getParent().getParent().getParent().toString()
             + "/games.txt");
+    // disk.initWithData(
+    // Paths.get("").toAbsolutePath().getParent().toString()
+    // + "/games.txt");
     System.out.println("\nEXPERIMENT 1");
     System.out.println("Total Number of records: " + disk.getNumberOfRecords() + " records");
     System.out.println("Size of a record: " + disk.getSizeOfRecord() + " bytes");
@@ -80,7 +77,7 @@ public class Main {
     System.out.println("Indexed Average: " + indexedAverage);
 
     System.out.println("Number of results: " + indexedResults.size());
-    tree.printKeysOfNodesAccessed();
+    // tree.printKeysOfNodesAccessed();
 
     lp.startProfiling();
     ArrayList<NBARecord> diskResults =
@@ -116,13 +113,12 @@ public class Main {
     System.out.println("Indexed Average: " + indexedAverage);
 
     System.out.println("Number of results: " + indexedResults.size());
-    tree.printKeysOfNodesAccessed();
 
     lp.startProfiling();
     ArrayList<NBARecord> diskResults =
         (ArrayList<NBARecord>)
             disk.getRecords().stream()
-                .filter((r) -> 0.6 <= r.getFgPctHome() && r.getFgPctHome() <= 1)
+                .filter((r) -> 0.6 <= r.getFgPctHome() && r.getFgPctHome() <= 1.0)
                 .collect(Collectors.toList());
 
     double linearAverage =
@@ -133,6 +129,7 @@ public class Main {
     lp.endProfiling();
     System.out.println("Total time taken: " + lp.getProfiledDurationNano() * Math.pow(10, -6));
     System.out.println("Number of blocks accessed: " + disk.getNumberOfBlocks() + " blocks");
+    // System.out.println(indexedResults.size() + " " + diskResults.size());
   }
 
   private static void experiment5() {
