@@ -3,10 +3,11 @@ package CZ4031Project1.bptree;
 public class Node {
   InternalNode parent;
   short[] keys;
-  int maxSize;
-  int size;
+  int maxKeys;
+  int keysSize;
 
-  int keyLowerBound(int key, int low, int high) {
+  int keyLowerBound(int key) {
+    int low = 0, high = this.keysSize;
     while (low < high) {
       int mid = low + (high - low) / 2;
 
@@ -16,14 +17,14 @@ public class Node {
         low = mid + 1;
       }
     }
-    if (low < this.size && this.keys[low] < key) {
+    if (low < this.keysSize && this.keys[low] < key) {
       low++;
     }
     return low;
   }
 
-  int keyUpperBound(int key, int low, int high) {
-    high++;
+  int keyUpperBound(int key) {
+    int low = 0, high = this.keysSize;
     while (low < high) {
       int mid = low + (high - low) / 2;
 
@@ -37,11 +38,10 @@ public class Node {
   }
 
   boolean isFull() {
-    // store at most maxSize-1 records to leave 1 extra space at all times
-    return this.size == this.maxSize - 1;
+    return this.keysSize == this.maxKeys;
   }
 
   boolean isOverfull() {
-    return this.size == this.maxSize;
+    return this.keysSize == this.maxKeys + 1;
   }
 }

@@ -26,8 +26,9 @@ public class Main {
     // tree.assertTreeStructure();
     experiment3();
     experiment4();
+    tree.printRecords();
 
-    // experiment5();
+    experiment5();
     // tree.printLeafs();
 
   }
