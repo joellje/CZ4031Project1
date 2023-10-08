@@ -61,23 +61,21 @@ public class LeafNode extends Node {
     this.recordsSize++;
   }
 
-  int delete(short key, NBARecord record) {
-    System.out.println("Deleting " + key);
-    this.printKeys();
-    int deleteIndex = this.keyLowerBound(key);
-    // key not found
-    if (deleteIndex == this.keysSize) {
-      System.out.println("Key " + key + " not found");
-      return 0;
+  boolean delete(short key, NBARecord record) {
+    // System.out.println("Deleting " + key);
+    // this.printKeys();
+    for (int i = 0; i < this.recordsSize; i++) {
+      if (this.records[i] == record) {
+        // shift
+        for (int j = i; j < this.keysSize - 1; j++) {
+          this.keys[j] = this.keys[j + 1];
+          this.records[j] = this.records[j + 1];
+        }
+        this.keysSize--;
+        this.recordsSize--;
+        return true;
+      }
     }
-
-    // shift
-    for (int i = deleteIndex; i < this.keysSize - 1; i++) {
-      this.keys[i] = this.keys[i + 1];
-      this.records[i] = this.records[i + 1];
-    }
-    this.keysSize--;
-    this.recordsSize--;
-    return 1;
+    return false;
   }
 }
