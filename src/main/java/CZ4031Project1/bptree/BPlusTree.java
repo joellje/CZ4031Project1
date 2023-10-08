@@ -36,52 +36,63 @@ public class BPlusTree {
       // get the right most key
       int childIndex = cur.keyUpperBound(key);
 
-      // if (cur.left != null)
-      // System.out.println(Arrays.toString(Arrays.copyOfRange(cur.left.keys, 0,
-      // cur.left.size-1)));
-      // System.out.println(
-      // Arrays.toString(Arrays.copyOfRange(cursor.keys, 0, cursor.size - 1))
-      // + " "
-      // + childIndex
-      // + "");
-      // if (cur.right != null)
-      // System.out.println(Arrays.toString(Arrays.copyOfRange(cur.right.keys, 0,
-      // cur.right.size-1)));
-      // System.out.println();
+      if (cur.left != null)
+        System.out.println(
+            Arrays.toString(Arrays.copyOfRange(cur.left.keys, 0, cur.left.keysSize)));
+      System.out.println(
+          Arrays.toString(Arrays.copyOfRange(cursor.keys, 0, cursor.keysSize))
+              + " "
+              + childIndex
+              + "");
+      if (cur.right != null)
+        System.out.println(
+            Arrays.toString(Arrays.copyOfRange(cur.right.keys, 0, cur.right.keysSize)));
+      System.out.println();
 
       cursor = cur.children[childIndex];
     }
-    // LeafNode c = (LeafNode) cursor;
-    // System.out.println();
-    // if (c.left != null)
-    // System.out.println(Arrays.toString(Arrays.copyOfRange(c.left.keys, 0,
-    // c.left.size)));
-    // System.out.println(Arrays.toString(Arrays.copyOfRange(cursor.keys, 0,
-    // cursor.size)) +
-    // "<<<<<<");
-    // if (c.right != null)
-    // System.out.println(Arrays.toString(Arrays.copyOfRange(c.right.keys, 0,
-    // c.right.size)));
-    //
+    LeafNode c = (LeafNode) cursor;
+    System.out.println();
+    if (c.left != null)
+      System.out.println(Arrays.toString(Arrays.copyOfRange(c.left.keys, 0, c.left.keysSize)));
+    System.out.println(
+        Arrays.toString(Arrays.copyOfRange(cursor.keys, 0, cursor.keysSize)) + "<<<<<<");
+    if (c.right != null)
+      System.out.println(Arrays.toString(Arrays.copyOfRange(c.right.keys, 0, c.right.keysSize)));
+
     this.setNodeAccessed(cursor);
     return (LeafNode) cursor;
   }
 
   private void splitInternalNode(InternalNode node) {
-    int keySplitIndex = (int) Math.ceil((node.keysSize) / 2.0);
-    short[] keys = new short[this.maxNodeSize];
-    Node[] children = new Node[this.maxNodeSize];
+    System.out.println("splitting");
+    node.printKeys();
+    int keySplitIndex = (int) Math.ceil((node.maxKeys) / 2.0);
+    short[] keys = new short[this.maxNodeSize + 1];
+    Node[] children = new Node[this.maxNodeSize + 1];
     short parentKey = node.keys[keySplitIndex];
 
     // split keys, ignore middle key
-    for (int i = keySplitIndex + 1; i < node.keysSize - 1; i++) {
+    for (int i = keySplitIndex + 1; i < node.keysSize; i++) {
       keys[i - keySplitIndex - 1] = node.keys[i];
     }
 
-    // split children, number of children = number of keys + 1
-    for (int i = keySplitIndex; i < node.childrenSize; i++) {
+    for (int i = keySplitIndex + 1; i < node.childrenSize; i++) {
       children[i - keySplitIndex - 1] = node.children[i];
     }
+    // 1 2 3 4 5
+    // 0 1 2 3 4 5
+    //
+    //    2 2 5
+    // 1 2     4 5
+    // 0 1 2   3 4 5
+
+    // 4 keys, 5 children
+    // maxkeys = 3
+    // maxchildren = 4
+    // index = 2
+    // leftnode = 2 key 3 children
+    // rightnode = 1 key 2 children
 
     InternalNode splitNode =
         new InternalNode(
@@ -104,11 +115,15 @@ public class BPlusTree {
     node.right = splitNode;
     if (splitNode.right != null) splitNode.right.left = splitNode;
 
+    node.printKeys();
+    splitNode.printKeys();
+
     if (node.parent == null) {
       // at top of tree, create new root
       InternalNode newRoot = new InternalNode(this.maxNodeSize);
-      newRoot.append(parentKey, node);
-      newRoot.appendChild(splitNode);
+      newRoot.children[0] = node;
+      newRoot.childrenSize++;
+      newRoot.append(parentKey, splitNode);
 
       node.parent = newRoot;
       splitNode.parent = newRoot;
@@ -117,19 +132,19 @@ public class BPlusTree {
       node.parent.insert(parentKey, splitNode, node.parent.getChildIndex(node) + 1);
       splitNode.parent = node.parent;
     }
-    // System.out.println("split internal");
-    // System.out.println(Arrays.toString(Arrays.copyOfRange(node.parent.keys, 0,
-    // node.parent.size-1)));
-    // System.out.println(Arrays.toString(Arrays.copyOfRange(node.keys, 0,
-    // node.size-1)));
-    // System.out.println(Arrays.toString(Arrays.copyOfRange(splitNode.keys, 0,
-    // splitNode.size-1)));
-    // this.printInternalNodes();
-    // System.out.println();
-    // this.printRecords();
+    this.fixKeys(this.root);
+    System.out.println("split internal");
+    System.out.println(
+        Arrays.toString(Arrays.copyOfRange(node.parent.keys, 0, node.parent.keysSize)));
+    System.out.println(Arrays.toString(Arrays.copyOfRange(node.keys, 0, node.keysSize)));
+    System.out.println(Arrays.toString(Arrays.copyOfRange(splitNode.keys, 0, splitNode.keysSize)));
+    this.printInternalNodes();
+    System.out.println();
+    this.printRecords();
   }
 
   public void insert(short key, NBARecord record) {
+    System.out.println("Inserting " + key);
     // empty tree
     if (this.firstLeaf == null) {
       this.firstLeaf = new LeafNode(this.maxNodeSize);
@@ -148,14 +163,13 @@ public class BPlusTree {
     }
 
     // leaf node full, split leaf node
-    short[] splitKeys = new short[this.maxNodeSize];
-    NBARecord[] splitRecords = new NBARecord[this.maxNodeSize];
+    short[] splitKeys = new short[this.maxNodeSize + 1];
+    NBARecord[] splitRecords = new NBARecord[this.maxNodeSize + 1];
 
-    // max number of keys in leaf node is maxNodeSize-1
-    int splitIndex = (int) Math.ceil(((this.maxNodeSize - 1) + 1) / 2.0);
+    int splitIndex = (int) Math.ceil((ln.maxKeys + 1) / 2.0);
 
     // split keys and records
-    for (int i = splitIndex; i < this.maxNodeSize; i++) {
+    for (int i = splitIndex; i < ln.keysSize; i++) {
       splitKeys[i - splitIndex] = ln.keys[i];
       splitRecords[i - splitIndex] = ln.records[i];
     }
@@ -163,8 +177,8 @@ public class BPlusTree {
     LeafNode splitNode =
         new LeafNode(
             this.maxNodeSize,
-            this.maxNodeSize - splitIndex,
-            this.maxNodeSize - splitIndex,
+            ln.keysSize - splitIndex,
+            ln.keysSize - splitIndex,
             splitKeys,
             splitRecords);
 
@@ -174,6 +188,8 @@ public class BPlusTree {
       ln.parent = this.root;
       this.root.append(ln.keys[0], ln);
     }
+    System.out.println(ln.parent.getChildIndex(ln));
+    ln.parent.printKeys();
     ln.parent.insert(splitNode.keys[0], splitNode, ln.parent.getChildIndex(ln) + 1);
 
     splitNode.parent = ln.parent;
@@ -191,10 +207,9 @@ public class BPlusTree {
       this.splitInternalNode(cursor);
       cursor = cursor.parent;
     }
-    // System.out.println(Arrays.toString(Arrays.copyOfRange(ln.keys, 0, ln.size)));
-    // System.out.println(Arrays.toString(Arrays.copyOfRange(splitNode.keys, 0,
-    // splitNode.size)));
-    // assertTreeStructure();
+    System.out.println(Arrays.toString(Arrays.copyOfRange(ln.keys, 0, ln.keysSize)));
+    System.out.println(Arrays.toString(Arrays.copyOfRange(splitNode.keys, 0, splitNode.keysSize)));
+    assertTreeStructure();
   }
 
   public void deleteRange(short start, short end) {
@@ -229,13 +244,6 @@ public class BPlusTree {
       deleted = ln.delete(key, record);
     }
 
-    while (ln.keys[ln.keysSize - 1] <= key && deleted == 0) {
-      System.out.println("go right!");
-
-      ln = ln.right;
-      deleted = ln.delete(key, record);
-    }
-
     if (deleted == 0) {
       System.out.println(
           "Record with key " + key + " does not exist!"); // if cannot find the record
@@ -245,27 +253,26 @@ public class BPlusTree {
     // we have the leaf node with the key, and that key has been deleted. what do?
     // we wanna check if the leafnode size fits the minimum requirement
     int minLeafSize = (ln.maxKeys + 1) / 2;
-    int sizeDiff = minLeafSize - (ln.keysSize - 1);
 
     // if(ln.parent != null){
     // System.out.println(Arrays.toString(ln.parent.children));
 
     // }
 
-    if (sizeDiff <= 0) {
-      fixKeys(root);
+    if (ln.keysSize >= minLeafSize) {
+      fixKeys(this.root);
       return; // dont need do anything if the size fits
     }
 
     // check if can borrow from left
     // check if can borrow from left
-    if (ln.left != null && ln.left.keysSize - 1 > minLeafSize) {
+    if (ln.left != null && ln.left.keysSize > minLeafSize) {
       borrowLeft(ln, ln.left);
       fixKeys(this.root);
       return;
     }
     // check if can borrow from right
-    if (ln.right != null && ln.right.keysSize - 1 > minLeafSize) {
+    if (ln.right != null && ln.right.keysSize > minLeafSize) {
       borrowRight(ln, ln.right);
       fixKeys(this.root);
       return;
@@ -275,48 +282,48 @@ public class BPlusTree {
     if (ln.left != null && ln.left.parent == ln.parent) {
       mergeLeaf(ln.left, ln);
       // recursively work on the parent node if parent node is smaller
-      if (ln.parent.keysSize - 1 < (ln.parent.maxKeys) / 2) {
-        fixparent(ln.parent);
+      if (ln.parent.keysSize < (ln.parent.maxKeys) / 2) {
+        fixParent(ln.parent);
       }
       return;
     }
     if (ln.right != null && ln.right.parent == ln.parent) {
       mergeLeaf(ln, ln.right);
-      if (ln.parent.keysSize - 1 < (ln.parent.maxKeys) / 2) {
-        fixparent(ln.parent);
+      if (ln.parent.keysSize < (ln.parent.maxKeys) / 2) {
+        fixParent(ln.parent);
       }
       return;
     }
   }
 
-  public void fixparent(InternalNode node) {
+  public void fixParent(InternalNode node) {
     if (node.parent != null) {
       int indexOfNode = node.parent.getChildIndex(node);
       if (indexOfNode > 0
-          && node.parent.children[indexOfNode - 1].size - 1 > (node.maxSize - 1) / 2) {
-        borrowleftinternal(node, (InternalNode) node.parent.children[indexOfNode - 1]);
-      } else if (indexOfNode < node.size - 1
-          && node.parent.children[indexOfNode + 1].size - 1 > (node.maxSize - 1) / 2) {
+          && node.parent.children[indexOfNode - 1].keysSize - 1 > (node.maxKeys) / 2) {
+        borrowLeftInternal(node, (InternalNode) node.parent.children[indexOfNode - 1]);
+      } else if (indexOfNode < node.keysSize - 1
+          && node.parent.children[indexOfNode + 1].keysSize - 1 > (node.maxKeys) / 2) {
         borrowrightinternal(node, (InternalNode) node.parent.children[indexOfNode + 1]);
       } else if (indexOfNode > 0) {
         // merge
         mergeInternal((InternalNode) node.parent.children[indexOfNode - 1], node);
-        if (node.parent.size < (node.maxSize - 1) / 2) {
-          fixparent(node.parent);
+        if (node.parent.keysSize < (node.maxKeys) / 2) {
+          fixParent(node.parent);
         }
       } else {
-        System.out.println(indexOfNode);
+        // System.out.println(indexOfNode);
         // System.out.println(node.parent.children[indexOfNode + 1]);
         mergeInternal(node, (InternalNode) node.parent.children[indexOfNode + 1]);
-        if (node.parent.size < (node.maxSize - 1) / 2) {
-          fixparent(node.parent);
+        if (node.parent.keysSize < (node.maxKeys) / 2) {
+          fixParent(node.parent);
         }
       }
       return;
     } else {
       // if only 1 pointer
       System.out.println("root issues");
-      if (node.size == 1) {
+      if (node.childrenSize == 1) {
         this.root = (InternalNode) node.children[0];
       }
       return;
@@ -325,160 +332,110 @@ public class BPlusTree {
 
   public void mergeInternal(InternalNode node1, InternalNode node2) {
     // lets conduct the merge. we will merge towards the left
-    short[] newkeys = new short[node1.maxSize - 1];
-    Node[] newchildren = new Node[node1.maxSize];
-    for (int i = 0; i < node1.size - 2; i++) {
-      newkeys[i] = node1.keys[i];
-      newchildren[i] = node1.children[i];
+    short[] newKeys = new short[node1.maxKeys];
+    Node[] newChildren = new Node[node1.maxChildren];
+    for (int i = 0; i < node1.keysSize; i++) {
+      newKeys[i] = node1.keys[i];
+      newChildren[i] = node1.children[i];
     }
-    newchildren[node1.size - 1] = node1.children[node1.size - 1];
+    newChildren[node1.keysSize] = node1.children[node1.keysSize];
     // so above, node 1 is duplicated
     // below, we want to duplicate node2
     // we first copy node 2 over
-    newkeys[node1.size - 1] =
+    newKeys[node1.keysSize] =
         node2.keys[0]; // we just put in this number first. it will be duplicated but fixed later
-    for (int i = 0; i < node2.size - 1; i++) {
-      int x = node1.size;
-      newkeys[i + x] = node2.keys[i];
-      newchildren[i + x] = node2.children[i];
+    for (int i = 0; i < node2.keysSize; i++) {
+      int x = node1.childrenSize;
+      newKeys[i + x] = node2.keys[i];
+      newChildren[i + x] = node2.children[i];
     }
 
-    newchildren[node1.size + node2.size - 1] = node2.children[node2.size - 1];
-    node1.keys = newkeys;
-    node1.children = newchildren;
-    node1.size = node1.size + node2.size;
-    for (Node child : node1.children) {
-      if (child != null) {
-        child.parent = node1;
-      }
+    newChildren[node1.childrenSize + node2.childrenSize - 1] =
+        node2.children[node2.childrenSize - 1];
+    node1.keys = newKeys;
+    node1.children = newChildren;
+    node1.childrenSize += node2.childrenSize;
+    node1.keysSize += node2.keysSize;
+    for (int i = 0; i < node1.childrenSize; i++) {
+      node1.children[i].parent = node1;
     }
     int indexOfNode = node1.parent.getChildIndex(node1);
     // we want to delete node 2 to fix the parent
-    short[] newkeysparent = new short[node1.maxSize - 1];
-    Node[] newchildrenparent = new Node[node1.maxSize];
     InternalNode parent = node1.parent;
-    for (int i = 0; i < indexOfNode; i++) {
-      newkeysparent[i] = parent.keys[i];
-      newchildrenparent[i] = parent.children[i];
-    }
 
-    newchildrenparent[indexOfNode] = parent.children[indexOfNode];
-    for (int i = indexOfNode + 1; i < parent.size - 1; i++) {
-      newkeysparent[i - 1] = parent.keys[i];
-      newchildrenparent[i] = parent.children[i + 1];
+    // shift keys
+    for (int i = indexOfNode - 1; i < parent.keysSize - 1; i++) {
+      parent.keys[i] = parent.keys[i + 1];
     }
+    // shift children
+    for (int i = indexOfNode; i < parent.childrenSize; i++) {
+      parent.children[i] = parent.children[i + 1];
+    }
+    parent.keysSize--;
+    parent.childrenSize--;
 
-    parent.keys = newkeysparent;
-    parent.children = newchildrenparent;
-    parent.size = parent.size - 1;
-    for (Node child : parent.children) {
-      if (child != null) {
-        child.parent = parent;
-      }
+    for (int i = 0; i < parent.childrenSize; i++) {
+      parent.children[i].parent = parent;
     }
     // now the parent is fixed, fix the keys
     fixKeys(parent);
     return;
   }
 
-  public void borrowleftinternal(InternalNode node, InternalNode leftnode) {
+  public void borrowLeftInternal(InternalNode node, InternalNode leftNode) {
     // find the keys to borrow
-    short keyShift = leftnode.keys[leftnode.size - 2];
-    Node childrenShift = leftnode.children[leftnode.size - 1];
+    short keyShift = leftNode.keys[leftNode.keysSize - 1];
+    Node childrenShift = leftNode.children[leftNode.childrenSize - 1];
 
-    // create new arrays
-    short[] newleftkeys = new short[leftnode.maxSize - 1];
-    Node[] newleftchildren = new Node[leftnode.maxSize];
+    leftNode.keysSize--;
+    leftNode.childrenSize--;
 
-    // duplicate the left node until the last key and the last pointer and update
-    // left
-    for (int i = 0; i < leftnode.size - 2; i++) {
-      newleftkeys[i] = leftnode.keys[i];
-      newleftchildren[i] = leftnode.children[i];
+    // shift right node keys
+    for (int i = 1; i < node.keysSize; i++) {
+      node.keys[i] = node.keys[i - 1];
     }
-    newleftchildren[leftnode.size - 2] = leftnode.children[leftnode.size - 2];
-    leftnode.keys = newleftkeys;
-    leftnode.children = newleftchildren;
-    leftnode.size = leftnode.size - 1; // left size decreases by 1
-    for (Node child : leftnode.children) {
-      if (child != null) {
-        child.parent = leftnode;
-      }
+    // shift right children
+    for (int i = 1; i < node.childrenSize; i++) {
+      node.children[i] = node.children[i - 1];
     }
-
-    // create new keys and children for node
-    short[] newkeys = new short[leftnode.maxSize - 1];
-    Node[] newchildren = new Node[leftnode.maxSize];
 
     // first index for key and pointer is the shift
-    newkeys[0] = keyShift;
-    newchildren[0] = childrenShift;
+    node.keys[0] = keyShift;
+    node.children[0] = childrenShift;
 
-    // update the node by duplicating everything but + 1 position
-    for (int i = 0; i < node.size - 1; i++) {
-      newkeys[i + 1] = node.keys[i];
-      newchildren[i + 1] = node.children[i];
-    }
-    newchildren[node.size] = node.children[node.size - 1];
-    node.keys = newkeys;
-    node.children = newchildren;
-    node.size = node.size + 1;
-    for (Node child : node.children) {
-      if (child != null) {
-        child.parent = node;
-      }
-    }
+    node.keysSize++;
+    node.childrenSize++;
+
     // fix the key
     fixKeys(root);
     return;
   }
 
-  public void borrowrightinternal(InternalNode node, InternalNode rightnode) {
+  public void borrowrightinternal(InternalNode node, InternalNode rightNode) {
+    // find the keys to borrow
+    short keyShift = rightNode.keys[0];
+    Node childrenShift = rightNode.children[0];
 
-    // key to shift is the first key and child of the right node
-    short keyShift = rightnode.keys[0];
-    Node childrenShift = rightnode.children[0];
-
-    // initialise the new arrays
-    short[] newrightkeys = new short[rightnode.keysSize];
-    Node[] newrightchildren = new Node[rightnode.childrenSize];
-
-    // push all rightkeys back by 1
-    for (int i = 1; i < rightnode.keysSize - 1; i++) {
-      newrightkeys[i - 1] = rightnode.keys[i];
-      newrightchildren[i - 1] = rightnode.children[i];
+    // shift right node keys
+    for (int i = 0; i < node.keysSize - 1; i++) {
+      node.keys[i] = node.keys[i + 1];
     }
-    newrightchildren[rightnode.size - 2] = rightnode.children[rightnode.size - 1];
-    rightnode.size = rightnode.size - 1;
-    // update right
-    rightnode.keys = newrightkeys;
-    rightnode.children = newrightchildren;
-    for (Node child : rightnode.children) {
-      if (child != null) {
-        child.parent = rightnode;
-      }
+    // shift right children
+    for (int i = 0; i < node.childrenSize; i++) {
+      node.children[i] = node.children[i + 1];
     }
-    // initialise arrays for the node
-    short[] newkeys = new short[rightnode.maxSize - 1];
-    Node[] newchildren = new Node[rightnode.maxSize];
 
-    // last key and child is the new ones
-    newkeys[node.size - 1] = keyShift;
-    newchildren[node.size] = childrenShift;
+    rightNode.keysSize--;
+    rightNode.childrenSize--;
 
-    for (int i = 0; i < node.size - 1; i++) {
-      newkeys[i] = node.keys[i];
-      newchildren[i] = node.children[i];
-    }
-    newchildren[node.size - 1] = node.children[node.size - 1];
-    node.keys = newkeys;
-    node.children = newchildren;
-    node.size = node.size + 1;
-    for (Node child : node.children) {
-      if (child != null) {
-        child.parent = node;
-      }
-    }
+    // shift left node keys
+    node.keys[node.keysSize] = keyShift;
+    node.children[node.childrenSize] = childrenShift;
+
+    node.keysSize++;
+    node.childrenSize++;
+
+    // fix the key
     fixKeys(root);
     return;
   }
@@ -516,7 +473,7 @@ public class BPlusTree {
               thisNode
                   .children[0]); // you wanna tell the above guy the smallest number at your side so
       // just dfs left
-      for (int i = 0; i < thisNode.keysSize - 1; i++) {
+      for (int i = 0; i < thisNode.keysSize; i++) {
         thisNode.keys[i] =
             fixKeys(
                 thisNode.children[i + 1]); // fix every key with the smallest branch of the child
@@ -528,12 +485,11 @@ public class BPlusTree {
   }
 
   public void mergeLeaf(LeafNode node1, LeafNode node2) {
-    short[] key1 = node1.keys;
-    short[] key2 = node2.keys;
-    NBARecord[] records1 = node1.records;
-    NBARecord[] records2 = node2.records;
-    for (int i = node1.keysSize; i < node1.keysSize + node2.keysSize; i++) {
-      int j = 0;
+    short[] key1 = Arrays.copyOf(node1.keys, node1.maxKeys);
+    short[] key2 = Arrays.copyOf(node2.keys, node2.maxKeys);
+    NBARecord[] records1 = Arrays.copyOf(node1.records, node1.maxRecords);
+    NBARecord[] records2 = Arrays.copyOf(node2.records, node2.maxRecords);
+    for (int i = node1.keysSize, j = 0; i < node1.keysSize + node2.keysSize; i++) {
       key1[i] = key2[j];
       records1[i] = records2[j];
       j++;
@@ -544,34 +500,24 @@ public class BPlusTree {
     // we update the parent
     // look for the left node
     InternalNode parent = node1.parent;
-    int left = 0;
-    for (int i = 0; i < parent.childrenSize; i++) {
-      if (parent.children[i] == node1) {
-        left = i;
-        break;
-      }
+    int rightIndex = parent.getChildIndex(node2);
+    // 1, 2, 3
+    // a, b, c, d
+
+    // shift keys
+    for (int i = rightIndex - 1; i < parent.keysSize - 1; i++) {
+      parent.keys[i] = parent.keys[i + 1];
     }
-    short[] newkeys = new short[parent.maxKeys];
-    Node[] newchildren = new Node[parent.maxChildren];
-    for (int j = 0; j < left; j++) {
-      newkeys[j] = parent.keys[j];
-      newchildren[j] = parent.children[j];
+    // shift children
+    for (int i = rightIndex; i < parent.childrenSize - 1; i++) {
+      parent.children[i] = parent.children[i + 1];
     }
-    newchildren[left] = parent.children[left]; // keep node 1
-    for (int j = left + 1; j < parent.childrenSize - 1; j++) {
-      newkeys[j - 1] = parent.keys[j];
-      newchildren[j] = parent.children[j + 1];
-    }
-    parent.keys = newkeys;
-    parent.children = newchildren;
     parent.keysSize--;
-    ;
     parent.childrenSize--;
     node1.right = node2.right;
-    for (Node child : parent.children) {
-      if (child != null) {
-        child.parent = parent;
-      }
+    if (node1.right != null) node1.right.left = node1;
+    for (int i = 0; i < parent.childrenSize; i++) {
+      parent.children[i].parent = parent;
     }
     return;
   }
@@ -767,12 +713,17 @@ public class BPlusTree {
   private void assertInternalNodeStructure(InternalNode node) throws IllegalStateException {
     // check keys are sorted
     for (int i = 0; i < node.keysSize - 1; i++) {
-      if (node.keys[i] > node.keys[i + 1])
+      if (node.keys[i] > node.keys[i + 1]) {
+        this.printInternalNodes();
+        System.out.println();
+        this.printRecords();
+
         throw new IllegalStateException(
             String.format(
                 "Internal Node key at at position %d has key %d which is larger than key %d at"
                     + " position %d",
                 i, node.keys[i], node.keys[i + 1], i + 1));
+      }
     }
 
     for (int i = 0; i < node.childrenSize; i++) {

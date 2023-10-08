@@ -34,10 +34,10 @@ public class Main {
   }
 
   private static void experiment1() {
-    // disk.initWithData(
-    //     Paths.get("").toAbsolutePath().getParent().getParent().getParent().toString()
-    //         + "/games.txt");
-    disk.initWithData(Paths.get("").toAbsolutePath().toString() + "/games.txt");
+    disk.initWithData(
+        Paths.get("").toAbsolutePath().getParent().getParent().getParent().toString()
+            + "/games.txt");
+    // disk.initWithData(Paths.get("").toAbsolutePath().toString() + "/games.txt");
     System.out.println("\n-----EXPERIMENT 1-----");
     System.out.println("Total Number of records: " + disk.getNumberOfRecords() + " records");
     System.out.println("Size of a record: " + disk.getSizeOfRecord() + " bytes");

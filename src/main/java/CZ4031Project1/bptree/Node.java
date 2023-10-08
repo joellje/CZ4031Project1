@@ -1,5 +1,7 @@
 package CZ4031Project1.bptree;
 
+import java.util.Arrays;
+
 public class Node {
   InternalNode parent;
   short[] keys;
@@ -43,5 +45,9 @@ public class Node {
 
   boolean isOverfull() {
     return this.keysSize == this.maxKeys + 1;
+  }
+
+  public void printKeys() {
+    System.out.println(Arrays.toString(Arrays.copyOfRange(this.keys, 0, this.keysSize)));
   }
 }
