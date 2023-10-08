@@ -62,6 +62,8 @@ public class LeafNode extends Node {
   }
 
   int delete(short key, NBARecord record) {
+    System.out.println("Deleting " + key);
+    this.printKeys();
     int deleteIndex = this.keyLowerBound(key);
     // key not found
     if (deleteIndex == this.keysSize) {

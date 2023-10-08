@@ -23,14 +23,11 @@ public class Main {
 
     experiment1();
     experiment2();
-    // tree.assertTreeStructure();
     experiment3();
     experiment4();
-    tree.printRecords();
-
     experiment5();
-    // tree.printLeafs();
-
+    tree.printRecords();
+    tree.assertTreeStructure();
   }
 
   private static void experiment1() {

@@ -18,13 +18,13 @@ public class InternalNode extends Node {
     this.children = new Node[this.maxChildren + 1];
   }
 
-  public InternalNode(int maxKeys, int keysSize, int childrenSize, short[] keys, Node[] children) {
-    if (keys.length != children.length || keys.length != maxKeys + 1) {
+  public InternalNode(int maxSize, int keysSize, int childrenSize, short[] keys, Node[] children) {
+    if (keys.length != children.length || keys.length != maxSize + 1) {
       throw new IllegalStateException(
           String.format(
               "Tried to create illegal internal node with maxSize+1: %d, size of keys: %d, size of"
                   + " children: %d. Ensure all sizes of equal",
-              maxKeys + 1, keys.length, children.length));
+              maxSize + 1, keys.length, children.length));
     }
     if (keysSize != childrenSize - 1) {
       throw new IllegalStateException(
@@ -32,8 +32,10 @@ public class InternalNode extends Node {
               "Tried to create illegal internal node with keysSize %d != childrenSize %d",
               keysSize, childrenSize));
     }
-    this.maxKeys = maxKeys;
+    this.maxKeys = maxSize - 1;
+    this.maxChildren = maxSize;
     this.keysSize = keysSize;
+    this.childrenSize = childrenSize;
     this.keys = keys;
     this.children = children;
   }
